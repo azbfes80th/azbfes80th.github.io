@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>行き方 | 第80回麻布学園文化祭</title>
+<meta name="description" content="麻布学園までの最寄り駅と所要時間、広尾駅からの帰路の案内。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<p class="demo-note">第80回文化祭実行委員長選挙のためのデモです。掲載内容は第79回の公開情報で、公式サイトではありません。</p>
+
+<header class="bar">
+  <a class="mark" href="index.html"><span class="mark-n disp">80</span><span class="mark-t">麻布学園文化祭</span></a>
+  <button class="burger" aria-expanded="false" aria-controls="nav" aria-label="メニューを開く">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="nav">
+    <a href="index.html">展示と校舎</a>
+    <a href="goods.html">物販</a>
+    <a href="access.html" aria-current="page">行き方</a>
+  </nav>
+</header>
+
+<main>
+  <div class="wrap">
+    <h1><span class="en disp">ACCESS</span><span class="ja">行き方</span></h1>
+    <p class="lede" id="venue"></p>
+    <ul class="rows stations" id="stations"></ul>
+
+    <h2>帰りの経路</h2>
+    <figure class="mapfig">
+      <img src="assets/map-hiroo.png" alt="広尾駅から校舎までの帰路の経路図" loading="lazy">
+      <figcaption id="return-route"></figcaption>
+    </figure>
+
+    <h2>ご案内</h2>
+    <ul class="notices" id="notices"></ul>
+    <p class="foot">第79回文化祭のパンフレットに載っていた案内です。</p>
+  </div>
+</main>
+
+<script type="module" src="site.js"></script>
+</body>
+</html>

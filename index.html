@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>第80回麻布学園文化祭</title>
+<meta name="description" content="第80回麻布学園文化祭実行委員長選挙のためのデモ。第79回の公開情報を素材に使っています。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script type="importmap">
+{"imports":{
+  "three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+
+<p class="demo-note">第80回文化祭実行委員長選挙のためのデモです。掲載内容は第79回の公開情報で、公式サイトではありません。</p>
+
+<header class="bar">
+  <a class="mark" href="index.html"><span class="mark-n disp">80</span><span class="mark-t">麻布学園文化祭</span></a>
+  <button class="burger" aria-expanded="false" aria-controls="nav" aria-label="メニューを開く">
+    <span></span><span></span><span></span>
+  </button>
+  <nav id="nav">
+    <a href="index.html" aria-current="page">展示と校舎</a>
+    <a href="goods.html">物販</a>
+    <a href="access.html">行き方</a>
+  </nav>
+</header>
+
+<main>
+  <section id="map">
+    <canvas id="stage"></canvas>
+
+    <h1 class="title"><span class="en disp">EXHIBITIONS</span><small>展示と校舎　普通教室棟と講堂、展示49室</small></h1>
+
+    <aside class="panel card" id="panel" data-open="true">
+      <button class="panel-toggle" aria-expanded="true">展示一覧</button>
+      <div class="panel-body">
+        <input id="q" type="search" placeholder="部屋番号か展示名で絞る" aria-label="展示を絞り込む">
+        <ol id="list"></ol>
+      </div>
+    </aside>
+
+    <div class="route card">
+      <label><span>出発</span><select id="from"></select></label>
+      <label><span>目的</span><select id="to"></select></label>
+      <div class="row">
+        <button id="go" class="pill">経路を出す</button>
+        <label class="opt"><input type="checkbox" id="nostairs"><span>階段を使わない</span></label>
+      </div>
+      <output id="result" aria-live="polite"></output>
+    </div>
+
+    <div class="floors" role="group" aria-label="階を選ぶ">
+      <button data-floor="0" class="on">全階</button>
+      <button data-floor="1">1F</button>
+      <button data-floor="2">2F</button>
+      <button data-floor="3">3F</button>
+      <button data-floor="4">4F</button>
+    </div>
+
+    <p class="hint">部屋を押すと展示が出ます。四隅の格子が階段、南東の二重枠がエレベーター。</p>
+  </section>
+</main>
+
+<script type="module" src="site.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

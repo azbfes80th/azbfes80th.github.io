@@ -1,0 +1,256 @@
+{
+ "floor": 2,
+ "rooms": [
+  {
+   "room": "200",
+   "name": "映画館展",
+   "desc": "展示員で自主制作したオリジナル映画を教室で上映する展示。ドキュメンタリーからアクション映画　様々なジャンルの映画を上映",
+   "cardColor": "green",
+   "wing": "south",
+   "indexInWing": 3
+  },
+  {
+   "room": "201",
+   "name": "折り紙展",
+   "desc": "折り紙展は、一枚の折り紙から作った難解な折り紙作品やたくさんのユニットからなる複雑な作品を　展示しています。",
+   "cardColor": "green",
+   "wing": "south",
+   "indexInWing": 2
+  },
+  {
+   "room": "202",
+   "name": "麻ノ葉よもぎ展",
+   "desc": "実際に配信に使っているアバターを動かしてみたり等身大パネルと写真を撮ったりしてよもぎと交流しに来てください！",
+   "cardColor": "green",
+   "wing": "south",
+   "indexInWing": 1
+  },
+  {
+   "room": "203",
+   "name": "CASINO展",
+   "desc": "中学3年生の学年展示。　ポーカー、ルーレット、ダーツの三種類のゲームでカジノの雰囲気を味わえる。",
+   "cardColor": "green",
+   "wing": "south",
+   "indexInWing": 0
+  },
+  {
+   "room": "210",
+   "name": "Moun展",
+   "desc": "私たちは「登る」だけじゃなく、山で生きるための道具や技術も大切にしています。まずは気軽に、壁を登ってみてください。",
+   "cardColor": "purple",
+   "wing": "west",
+   "indexInWing": 3
+  },
+  {
+   "room": "211",
+   "name": "麻経展",
+   "desc": "遊びながら経済がわかる麻経展、ぜひ気軽に立ち寄ってみてください！",
+   "cardColor": "purple",
+   "wing": "west",
+   "indexInWing": 2
+  },
+  {
+   "room": "212",
+   "name": "AGC展",
+   "desc": "パー研部員の制作したゲームで遊ぶことができます。また、部員の制作した音楽や長編ゲームを収録したCDを販売します。",
+   "cardColor": "pink",
+   "wing": "west",
+   "indexInWing": 1
+  },
+  {
+   "room": "213",
+   "name": "AGC展",
+   "desc": "パー研部員の制作したゲームで遊ぶことができます。また、部員の制作した音楽や長編ゲームを収録したCDを販売します。",
+   "cardColor": "pink",
+   "wing": "west",
+   "indexInWing": 0
+  },
+  {
+   "room": "220",
+   "name": "SASUKE展",
+   "desc": "今年のSASUKE展は、3エリアの体験と、ジオラマや写真撮影スポットなど展示しています。SASUKE出場者率いる過去最大規模です。　ぜひご来場ください。",
+   "cardColor": "pink",
+   "wing": "north",
+   "indexInWing": 0
+  },
+  {
+   "room": "221",
+   "name": "SASUKE展",
+   "desc": "今年のSASUKE展は、3エリアの体験と、ジオラマや写真撮影スポットなど展示しています。SASUKE出場者率いる過去最大規模です。　ぜひご来場ください。",
+   "cardColor": "pink",
+   "wing": "north",
+   "indexInWing": 1
+  },
+  {
+   "room": "222",
+   "name": "格付け展",
+   "desc": "あなたは何流？　麻布生がつくった至極の格付けチェックを突破せよ！！",
+   "cardColor": "purple",
+   "wing": "north",
+   "indexInWing": 2
+  },
+  {
+   "room": "223",
+   "name": "生物部展",
+   "desc": "麻布と言えば生物部。　北海道から沖縄まで、日本全国の多種多様な生物たちがあなたを待っています。最高の展示を創ります。",
+   "cardColor": "blue",
+   "wing": "north",
+   "indexInWing": 3
+  },
+  {
+   "room": "231",
+   "name": "生物部展",
+   "desc": "麻布と言えば生物部。　北海道から沖縄まで、日本全国の多種多様な生物たちがあなたを待っています。最高の展示を創ります。",
+   "cardColor": "blue",
+   "wing": "north_stub",
+   "indexInWing": 0
+  },
+  {
+   "room": "230",
+   "name": "討論展",
+   "desc": "麻布のことから世界情勢のことまで、いろんなテーマで討論してます。世論調査や紙展も充実してます。　討論部誌を無料で配布してます。　ぜひお越しください。",
+   "cardColor": "blue",
+   "wing": "west",
+   "indexInWing": 4
+  },
+  {
+   "room": "232",
+   "name": "脱出ゲーム展",
+   "desc": "脱出ゲーム展です！今年の謎解きのテーマは「麻布学園からの脱出」です！ひらめき力を使う謎解きなので、誰でも楽しむことができます。ぜひ来てください！",
+   "cardColor": "blue",
+   "wing": "east_annex",
+   "indexInWing": 0
+  },
+  {
+   "room": "233",
+   "name": "おば展",
+   "desc": "文化祭の定番、お化け屋敷やってます。最近のお化けはコンプライアンスへの配慮も持っているので、安心して来てね。",
+   "cardColor": "blue",
+   "wing": "east_annex",
+   "indexInWing": 1
+  }
+ ],
+ "features": [
+  {
+   "type": "stairs",
+   "wing": "north",
+   "note": "220の左側(北棟西端、大きな階段)"
+  },
+  {
+   "type": "stairs",
+   "wing": "north",
+   "note": "220の左上、北棟西端の小階段"
+  },
+  {
+   "type": "stairs",
+   "wing": "west",
+   "note": "213の上(北西角、213の北側)"
+  },
+  {
+   "type": "stairs",
+   "wing": "north",
+   "note": "223の右側(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "north",
+   "note": "223の右側(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "east_annex",
+   "note": "233の左(トイレの下に2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "east_annex",
+   "note": "233の左(トイレの下に2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "south",
+   "note": "230の右、203の左(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "south",
+   "note": "230の右、203の左(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "south",
+   "note": "200の右、EVの左(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "south",
+   "note": "200の右、EVの左(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "south",
+   "note": "南棟東端、トイレの左(2か所並ぶ)"
+  },
+  {
+   "type": "stairs",
+   "wing": "south",
+   "note": "南棟東端、トイレの左(2か所並ぶ)"
+  },
+  {
+   "type": "elevator",
+   "wing": "south",
+   "note": "200の右(階段の右隣、EV表記)"
+  },
+  {
+   "type": "toilet",
+   "wing": "east_annex",
+   "note": "233の左、階段の上"
+  },
+  {
+   "type": "toilet",
+   "wing": "south",
+   "note": "230の下(南西角、階段の下)"
+  },
+  {
+   "type": "toilet",
+   "wing": "south",
+   "note": "南棟東端の突き当たり"
+  },
+  {
+   "type": "trash",
+   "wing": "west",
+   "note": "北西角、220の左・213の上あたり"
+  },
+  {
+   "type": "void",
+   "wing": "east",
+   "note": "北棟223の右から南棟200の右まで続く縦長の灰色帯。吹き抜けか立入禁止か図からは断定できない"
+  },
+  {
+   "type": "void",
+   "wing": "north_stub",
+   "note": "231の下の灰色部分"
+  },
+  {
+   "type": "void",
+   "wing": "east_annex",
+   "note": "トイレの上の灰色部分(233の左上)"
+  },
+  {
+   "type": "void",
+   "wing": "south",
+   "note": "南棟東寄り、EV右の灰色の大きな区画"
+  },
+  {
+   "type": "void",
+   "wing": "south",
+   "note": "南棟東端の下側に張り出す灰色の区画"
+  }
+ ],
+ "tour": {
+  "title": "校内ツアー",
+  "desc": "麻布学園の生徒による自治機関、予算委員会による公式展示です。担当者とともに校内を巡り、麻布についてより知ることができます！主に、受験生向けのものとなっております。",
+  "time": "全日10時/12時/14時台　10分～/40分～",
+  "meet": "図書館棟前（一階の113・120間の廊下を外に出た先）に開始時間の10分前を目安にお越しください。"
+ }
+}

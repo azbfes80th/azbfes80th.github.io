@@ -1,0 +1,40 @@
+{
+  "floor": 1,
+  "rooms": [
+    {"room": "100", "name": "Information展", "desc": "ご来場の皆様のため、各展示の案内や紹介、拾得物の管理やベビーカーの預かりを行っています。", "cardColor": "green", "wing": "south", "indexInWing": 2},
+    {"room": "101", "name": "保健分室", "desc": "怪我や体調不良の際はお気軽に　お越しください。", "cardColor": "green", "wing": "south", "indexInWing": 1},
+    {"room": "102", "name": "麻布展", "desc": "麻布学園にまつわる様々なことを紹介しています。麻布生よりもこの学校に詳しくなれます。", "cardColor": "green", "wing": "south", "indexInWing": 0},
+    {"room": "110", "name": "鉄道研究部展", "desc": "鉄道模型運転体験や行先表示器風LED表示器との記念撮影といった体験型展示も充実しています。　ぜひご来場ください！", "cardColor": "purple", "wing": "west", "indexInWing": 3},
+    {"room": "111", "name": "鉄道研究部展", "desc": "鉄道模型運転体験や行先表示器風LED表示器との記念撮影といった体験型展示も充実しています。　ぜひご来場ください！", "cardColor": "purple", "wing": "west", "indexInWing": 2},
+    {"room": "112", "name": "算数展", "desc": "小学生から大人まで楽しめる問題を用意しておりますのでぜひお越しください!!自作麻布入試問題も販売します。", "cardColor": "purple", "wing": "west", "indexInWing": 1},
+    {"room": "113", "name": "オセロ展", "desc": "元世界チャンピオンの下で学んだ世界レベルの部員たちがあなたの挑戦を待っています!!!", "cardColor": "purple", "wing": "west", "indexInWing": 0},
+    {"room": "120", "name": "メイドカフェ展", "desc": "屈強な漢ではなくメイドが　お出迎え。チェキもできます。", "cardColor": "pink", "wing": "north", "indexInWing": 0},
+    {"room": "121", "name": "Club AZ展", "desc": "15分の甘〜いひと時を　君の瞳に乾杯", "cardColor": "pink", "wing": "north", "indexInWing": 1},
+    {"room": "122", "name": "AZARBUCKS展", "desc": "あのカフェチェーンが麻布に出現！爽やかな落ち着きのある空間と、麻布生特製極上のフラッペチーノを　お楽しみ下さい。", "cardColor": "pink", "wing": "north", "indexInWing": 2},
+    {"room": "123", "name": "軟茶っ亭", "desc": "昨年の飲食展示大賞！麻布の文化祭に欠かせない甘味処であり映えスポット", "cardColor": "pink", "wing": "north", "indexInWing": 3},
+    {"room": "130", "name": "小ステージ", "desc": "軽音をはじめとした様々な公演を行います。フロンティアステージ展示も行いますので詳細はP4.7をご覧ください", "cardColor": "blue", "wing": "north_stub", "indexInWing": 0},
+    {"room": "131", "name": "油そば展", "desc": "麻布生のソウルフード　売切後免、伝統の味", "cardColor": "orange", "wing": "east_annex", "indexInWing": 0},
+    {"room": "132", "name": "飲料販売", "desc": "キンキンに冷えた飲み物を販売しています。結構安いです。", "cardColor": "orange", "wing": "east", "indexInWing": 0},
+    {"room": "133", "name": "わたあめ展", "desc": "中庭をあまあまにします", "cardColor": "orange", "wing": "east", "indexInWing": 1}
+  ],
+  "features": [
+    {"type": "stairs", "wing": "north", "note": "120の左側（北西角）"},
+    {"type": "stairs", "wing": "west", "note": "113の上（西辺の北端）"},
+    {"type": "stairs", "wing": "north", "note": "123の右側（北東角）"},
+    {"type": "stairs", "wing": "east_annex", "note": "131の左下、講堂の北西角付近"},
+    {"type": "stairs", "wing": "south", "note": "100の右、EVの左"},
+    {"type": "stairs", "wing": "south", "note": "102の左、だれでもトイレの右（南西角）"},
+    {"type": "stairs", "wing": "south", "note": "入退場口の右上（南東、講堂の南側）"},
+    {"type": "elevator", "wing": "south", "note": "100の右（階段の右）"},
+    {"type": "toilet", "wing": "north", "note": "体育館の右隣、北西の角（男女）"},
+    {"type": "toilet", "wing": "north_stub", "note": "130の右、北東の奥（女子のみの表示）"},
+    {"type": "toilet", "wing": "east", "note": "講堂の左、注意マークの右上（男子）"},
+    {"type": "toilet", "wing": "east", "note": "講堂の左下、133より下（女子）"},
+    {"type": "toilet", "wing": "south", "note": "南西角、102の左（男女・だれでもトイレ併記）"},
+    {"type": "toilet", "wing": "south", "note": "入退場口の右上、南東の奥（男女）"},
+    {"type": "trash", "wing": "north", "note": "中庭の北側、121と122の間の下"},
+    {"type": "trash", "wing": "south", "note": "中庭の南側、101の上"},
+    {"type": "caution", "wing": "east", "note": "講堂の左に縦長のオレンジ色の枠に「!」。凡例の「！文化祭グッズ販売」と同じ記号で、グッズ販売場所とみられる"}
+  ],
+  "landmarks": ["講堂", "体育館", "中庭", "ステージ", "入退場口"]
+}
