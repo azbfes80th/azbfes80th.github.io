@@ -185,6 +185,13 @@ main { flex: 1; min-height: 0; position: relative; }
 #slot {
   position: absolute; left: 50%; bottom: 88px; transform: translateX(-50%);
   width: min(560px, calc(100% - 44px));
+  transition: left .32s cubic-bezier(.22,.9,.24,1), bottom .32s cubic-bezier(.22,.9,.24,1),
+              width .32s cubic-bezier(.22,.9,.24,1), transform .32s cubic-bezier(.22,.9,.24,1);
+}
+/* 道順は3Dを隠さないよう左下へ寄せる */
+#slot.as-route {
+  left: var(--gut); bottom: 26px; transform: none;
+  width: min(380px, calc(100% - 44px));
 }
 #slot[hidden] { display: none; }
 .detail { padding: 15px 18px 16px; }
@@ -336,7 +343,10 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   .title { top: 18px; }
   /* 一覧は上、経路は下。どちらも畳んだ状態で重ならないように離す */
   .panel { top: 14px; bottom: auto; right: var(--gut); left: var(--gut); width: auto; max-height: 46%; }
-  #slot { left: var(--gut); right: var(--gut); bottom: 76px; width: auto; transform: none; }
+  #slot, #slot.as-route {
+    top: 68px; bottom: auto; left: var(--gut); right: var(--gut);
+    width: auto; transform: none;
+  }
   .dbody { max-height: 20vh; }
   .title { display: none; }
   .floors { bottom: 20px; }

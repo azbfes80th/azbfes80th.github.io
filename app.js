@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを出す。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=3';
-import { $, $$, load } from './site.js?v=3';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=4';
+import { $, $$, load } from './site.js?v=4';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -55,6 +55,8 @@ async function init() {
   const entries = [];
   for (const r of rooms) for (const ex of r.exhibits) entries.push({ ...ex, room: r.room, floor: r.floor, space: r.space });
 
+  const narrow = () => matchMedia('(max-width: 820px)').matches;
+
   const graph = buildGraph(floors);
   const scene = createScene($('#stage'), floors, (d) => openDetail(d.room, d.floor, null));
 
@@ -67,7 +69,7 @@ async function init() {
   });
 
   $('.panel-toggle').addEventListener('click', () => togglePanel());
-  togglePanel(!matchMedia('(max-width: 820px)').matches); // 狭い画面では畳んで3Dに場所を譲る
+  togglePanel(!narrow()); // 狭い画面では畳んで3Dに場所を譲る
 
   $$('.floors button').forEach((b) => b.addEventListener('click', () => {
     $$('.floors button').forEach((o) => o.classList.toggle('on', o === b));
@@ -97,8 +99,10 @@ async function init() {
   // ---- 3Dと階のタブの間の枠 --------------------------------------------
   const slot = $('#slot');
 
+  // 道順は3Dを隠さないよう左へ寄せる。説明は3Dと階のタブの間のまま
   function show(el) {
     if (!el) { slot.hidden = true; slot.replaceChildren(); return; }
+    slot.classList.toggle('as-route', el.classList.contains('routecard'));
     slot.replaceChildren(el);
     slot.hidden = false;
   }
@@ -115,6 +119,7 @@ async function init() {
     if (!r) return;
     viewing = { room, floor };
     paintRooms();
+    if (narrow()) togglePanel(false);
 
     const paint = () => show(detailCard(r));
 
@@ -210,6 +215,7 @@ async function init() {
     if (leg[other] && leg[other].room === room && leg[other].floor === floor) leg[other] = null;
     leg[which] = { room, floor };
     viewing = null; // 選んだら説明を閉じる
+    if (leg.from && leg.to && narrow()) togglePanel(false);
     paintRooms();
     show(routeCard());
   }
