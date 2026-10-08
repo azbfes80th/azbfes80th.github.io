@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを表示する。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=11';
-import { $, $$, load } from './site.js?v=11';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=12';
+import { $, $$, load } from './site.js?v=12';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -63,7 +63,12 @@ async function init() {
 
   // 一覧は展示ごとに1行。1部屋に複数の展示が入ることがある
   const entries = [];
-  for (const r of rooms) for (const ex of r.exhibits) entries.push({ ...ex, room: r.room, floor: r.floor, space: r.space });
+  for (const r of rooms) {
+    const tags = [];
+    if (food.rooms && food.rooms[r.room]) tags.push(['飲', '飲食の販売あり']);
+    if (sales.has(r.room)) tags.push(['販', '販売物あり']);
+    for (const ex of r.exhibits) entries.push({ ...ex, room: r.room, floor: r.floor, space: r.space, tags });
+  }
 
   const narrow = () => matchMedia('(max-width: 820px)').matches;
   // 狭い画面では、道順を出している間だけ一覧と出発・目的を隠して手順に場所を譲る
@@ -452,7 +457,16 @@ async function init() {
 
       const right = document.createElement('span');
       const t = document.createElement('span');
+      t.className = 'nm';
       t.textContent = e.name;
+      for (const [mark, label] of e.tags) {
+        const b = document.createElement('span');
+        b.className = `tag t-${mark}`;
+        b.textContent = mark;
+        b.title = label;
+        b.setAttribute('aria-label', label);
+        t.append(b);
+      }
       const fl = document.createElement('span');
       fl.className = 'fl';
       fl.textContent = e.space ? `${e.floor}階　${e.space}` : `${e.floor}階`;

@@ -299,6 +299,16 @@ html:active-view-transition-type(pick)::view-transition-new(root) { animation: n
   font-size: 16px; color: var(--red); letter-spacing: -0.02em;
 }
 #list .fl { display: block; font-size: 11px; color: var(--sub); }
+#list .nm { display: inline; }
+
+/* 販売物と飲食の印 */
+.tag {
+  display: inline-grid; place-items: center;
+  width: 17px; height: 17px; margin-left: 5px; vertical-align: 1px;
+  border-radius: 5px; font-size: 10.5px; line-height: 1; color: #fff;
+}
+.t-販 { background: var(--red); }
+.t-飲 { background: #f5900b; }
 
 .pick { flex: 0 0 auto; border-bottom: 1px solid var(--hair); padding-bottom: 12px; }
 .pick h3 { margin: 0 0 5px; font-size: 15px; font-weight: 600; display: flex; align-items: baseline; gap: 9px; }
@@ -365,7 +375,7 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
 .rows li { display: grid; align-items: center; gap: 22px; padding: 22px 0; border-top: 1px solid var(--hair); }
 .rows li:last-child { border-bottom: 1px solid var(--hair); }
 
-.goods li { grid-template-columns: 104px 1fr auto; }
+.goods li { grid-template-columns: 104px 1fr; }
 .goods img { width: 104px; height: 104px; object-fit: contain; background: var(--tint); border-radius: 12px; }
 .goods .nm { font-size: 17px; }
 .goods .note { display: block; font-size: 13px; color: var(--sub); }
@@ -448,7 +458,7 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   .hint { display: none; }
 
   .wrap { padding-top: 52px; padding-bottom: 96px; }
-  .goods li { grid-template-columns: 72px 1fr auto; gap: 16px; }
+  .goods li { grid-template-columns: 72px 1fr; gap: 16px; }
   .goods img { width: 72px; height: 72px; }
   .num { font-size: 24px; }
 }

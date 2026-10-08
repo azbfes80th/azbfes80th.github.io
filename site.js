@@ -4,7 +4,7 @@
 // GitHub Pages は HTML も最大10分ブラウザに保存させる。古いHTMLのままだと
 // 新しいCSSやJSが読まれず表示が崩れるので、版が食い違っていたら読み直す。
 // 番号は bump.py で version.txt と一緒に上げる。
-const BUILD = '11';
+const BUILD = '12';
 fetch('version.txt', { cache: 'no-store' })
   .then((r) => (r.ok ? r.text() : null))
   .then((v) => {
@@ -66,19 +66,9 @@ if ($('#goods-list')) {
       const nm = document.createElement('span');
       nm.className = 'nm';
       nm.textContent = it.name;
-      const note = document.createElement('span');
-      note.className = 'note';
-      note.textContent = it.note || '';
-      mid.append(nm, note);
+      mid.append(nm);
 
-      const pr = document.createElement('div');
-      pr.className = 'num disp';
-      pr.append(it.price.toLocaleString('ja-JP'));
-      const yen = document.createElement('small');
-      yen.textContent = '円';
-      pr.append(yen);
-
-      li.append(im, mid, pr);
+      li.append(im, mid);
       ul.append(li);
     }
   }).catch(showError);
@@ -114,6 +104,40 @@ if ($('#stations')) {
 
       li.append(left, w);
       ul.append(li);
+    }
+
+    const bl = $('#buses');
+    if (bl && (a.buses || []).length) {
+      for (const b of a.buses) {
+        const li = document.createElement('li');
+        const left = document.createElement('div');
+        const ln = document.createElement('span');
+        ln.className = 'ln';
+        ln.textContent = b.line;
+        const st = document.createElement('span');
+        st.className = 'st';
+        st.textContent = b.stop ? `${b.stop}で降車` : b.route;
+        left.append(ln, st);
+        if (b.stop && b.route) {
+          const sub = document.createElement('span');
+          sub.className = 'ln';
+          sub.textContent = b.route;
+          left.append(sub);
+        }
+        const w = document.createElement('div');
+        w.className = 'num disp';
+        const m = String(b.walk || '').match(/\d+/);
+        if (m) {
+          w.append(m[0]);
+          const unit = document.createElement('small');
+          unit.textContent = '分';
+          w.append(unit);
+        }
+        li.append(left, w);
+        bl.append(li);
+      }
+    } else if (bl) {
+      bl.closest('section, div')?.remove();
     }
 
     $('#return-route').textContent = a.returnRoute || '';
