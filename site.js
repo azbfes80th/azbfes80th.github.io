@@ -1,6 +1,23 @@
 // 全ページ共通。ハンバーガーと、物販・行き方の中身の描画。
 // 置き場所のある要素だけを見て動くので、3ページとも同じこのファイルを読む。
 
+// GitHub Pages は HTML も最大10分ブラウザに保存させる。古いHTMLのままだと
+// 新しいCSSやJSが読まれず表示が崩れるので、版が食い違っていたら読み直す。
+// 番号は bump.py で version.txt と一緒に上げる。
+const BUILD = '5';
+fetch('version.txt', { cache: 'no-store' })
+  .then((r) => (r.ok ? r.text() : null))
+  .then((v) => {
+    if (!v) return;
+    const latest = v.trim();
+    if (latest === BUILD) { sessionStorage.removeItem('afes-reload'); return; }
+    if (sessionStorage.getItem('afes-reload') === latest) return; // 繰り返さない
+    sessionStorage.setItem('afes-reload', latest);
+    location.reload();
+  })
+  .catch(() => {});
+
+
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 

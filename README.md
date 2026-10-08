@@ -38,12 +38,13 @@
 使っている外部のものは three.js（CDN）と Google Fonts の2つだけです。フレームワークもビルドツールも
 入れていません。
 
-**更新したら `?v=` の番号を上げてください。** GitHub Pages は CSS と JS をブラウザに保存させるので、
-新しいHTMLと古いJSが混ざって壊れます。番号は3つのHTMLの読み込み行と、`app.js` 冒頭の import にあります。
+**更新したら `python bump.py` を実行してください。** GitHub Pages は CSS と JS をブラウザに保存させる
+ので、新しいHTMLと古いJSが混ざって壊れます。bump.py が3つのHTMLと `app.js` の `?v=`、`site.js` の
+`BUILD`、`version.txt` をまとめて1つ上げます。
 
-```bash
-grep -rn '?v=' *.html app.js
-```
+HTML 自体も最大10分は保存されます。これは `?v=` では避けられないので、`site.js` が読み込み時に
+`version.txt` を取りに行き、`BUILD` と食い違っていたらページを読み直します。1回だけ読み直し、
+`sessionStorage` で繰り返しを止めています。
 
 ローカルで見るときは、`fetch` が `file://` では動かないので、簡易サーバーを立ててください。
 
