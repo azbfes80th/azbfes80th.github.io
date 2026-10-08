@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを出す。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=9';
-import { $, $$, load } from './site.js?v=9';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=10';
+import { $, $$, load } from './site.js?v=10';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -203,7 +203,7 @@ async function init() {
 
     const more = document.createElement('button');
     more.type = 'button';
-    more.className = 'link more';
+    more.className = 'pill red';
     more.textContent = '展示詳細';
     more.addEventListener('click', () => openSheet(r));
     act.append(more);

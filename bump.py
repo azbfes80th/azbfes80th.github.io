@@ -13,7 +13,7 @@ import re
 import sys
 
 ROOT = pathlib.Path(__file__).parent
-HTML = ['index.html', 'goods.html', 'access.html']
+HTML = ['index.html', 'map.html', 'goods.html', 'access.html']
 
 cur = int((ROOT / 'version.txt').read_text(encoding='utf-8').strip())
 new = cur + 1

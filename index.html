@@ -8,15 +8,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=9">
-<script type="importmap">
-{"imports":{
-  "three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
-  "three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
-}}
-</script>
+<link rel="preload" as="image" href="assets/hero.jpg">
+<link rel="stylesheet" href="style.css?v=10">
 </head>
-<body>
+<body class="home">
 
 <p class="demo-note">第80回文化祭実行委員長選挙のためのデモです。掲載内容は第79回の公開情報で、公式サイトではありません。</p>
 
@@ -26,43 +21,41 @@
     <span></span><span></span><span></span>
   </button>
   <nav id="nav">
-    <a href="index.html" aria-current="page">展示と校舎</a>
+    <a href="map.html">展示と校舎</a>
     <a href="goods.html">物販</a>
     <a href="access.html">行き方</a>
   </nav>
 </header>
 
 <main>
-  <section id="map">
-    <canvas id="stage"></canvas>
-
-    <h1 class="title"><span class="en disp">EXHIBITIONS</span><small>展示と校舎　普通教室棟と講堂、展示49室</small></h1>
-
-    <aside class="panel card" id="panel" data-open="true">
-      <button class="panel-toggle" aria-expanded="true">展示一覧</button>
-      <div class="panel-body">
-        <input id="q" type="search" placeholder="部屋番号か展示名で絞る" aria-label="展示を絞り込む">
-        <ol id="list"></ol>
-      </div>
-    </aside>
-
-    <div id="slot" aria-live="polite" hidden></div>
-
-    <div class="floors" role="group" aria-label="階を選ぶ">
-      <button data-floor="0" class="on">全階</button>
-      <button data-floor="1">1F</button>
-      <button data-floor="2">2F</button>
-      <button data-floor="3">3F</button>
-      <button data-floor="4">4F</button>
-    </div>
-
-    <p class="hint">一覧か3Dの部屋を押すと展示が出ます。黄色が階段とエレベーター。</p>
+  <section class="hero">
+    <img class="hero-img" src="assets/hero.jpg" alt="中庭のフィナーレ。風船が一斉に上がり、生徒と来場者が見上げている" fetchpriority="high">
+    <h1 class="hero-t disp">Welcome to<br>80th AFes demo site</h1>
   </section>
+
+  <nav class="doors" aria-label="このサイトの3つの画面">
+    <a class="door" href="map.html">
+      <span class="en disp">EXHIBITIONS</span>
+      <span class="ja">展示と校舎</span>
+      <span class="sub">校舎の3Dモデルで展示を探し、展示から展示への道順を出します。展示96件。</span>
+    </a>
+    <a class="door" href="goods.html">
+      <span class="en disp">GOODS</span>
+      <span class="ja">物販</span>
+      <span class="sub">Tシャツ、トートバッグ、タオル、クリアファイル、シャーペン。</span>
+    </a>
+    <a class="door" href="access.html">
+      <span class="en disp">ACCESS</span>
+      <span class="ja">行き方</span>
+      <span class="sub">最寄り5駅と所要時間、広尾駅からの帰路、当日のご案内。</span>
+    </a>
+  </nav>
+
+  <p class="home-foot">
+    写真は第79回文化祭のフィナーレです。掲載している数字と品目はすべて第79回のもので、第80回の内容は未定です。
+  </p>
 </main>
 
-<dialog id="sheet" aria-label="展示の詳細"></dialog>
-
-<script type="module" src="site.js?v=9"></script>
-<script type="module" src="app.js?v=9"></script>
+<script type="module" src="site.js?v=10"></script>
 </body>
 </html>
