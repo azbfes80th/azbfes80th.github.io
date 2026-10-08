@@ -6,8 +6,8 @@
 
 /* ページ間の移動。押した見出しの語だけを白地に残し、次のページの見出しの位置と
    大きさまで動かす。ほかの部分は先に消えて、語が着いてから現れる。 */
-::view-transition-old(root) { animation: page-out .2s ease-in both; }
-::view-transition-new(root) { animation: page-in .34s .26s ease-out both; }
+::view-transition-old(root) { animation: page-out .28s ease-in both; }
+::view-transition-new(root) { animation: page-in .44s .46s ease-out both; }
 @keyframes page-out { to { opacity: 0; } }
 @keyframes page-in { from { opacity: 0; } }
 
@@ -15,8 +15,8 @@
 ::view-transition-group(w-goods),
 ::view-transition-group(w-access) {
   z-index: 10;
-  animation-duration: .62s;
-  animation-timing-function: cubic-bezier(.26, .9, .22, 1);
+  animation-duration: .95s;
+  animation-timing-function: cubic-bezier(.3, .86, .24, 1);
 }
 
 /* ホームの3つの入口と、各ページの見出しを同じ名前で結ぶ */
@@ -394,14 +394,12 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
 .lede { margin: 0 0 64px; color: var(--sub); font-size: 17px; line-height: 1.6; }
 .foot { margin: 64px 0 0; color: var(--sub); font-size: 12.5px; }
 
+.prose { max-width: 36em; }
+.prose p { margin: 0 0 18px; font-size: 16px; line-height: 1.9; }
+
 .rows { list-style: none; margin: 0; padding: 0; }
 .rows li { display: grid; align-items: center; gap: 22px; padding: 22px 0; border-top: 1px solid var(--hair); }
 .rows li:last-child { border-bottom: 1px solid var(--hair); }
-
-.goods li { grid-template-columns: 104px 1fr; }
-.goods img { width: 104px; height: 104px; object-fit: contain; background: var(--tint); border-radius: 12px; }
-.goods .nm { font-size: 17px; }
-.goods .note { display: block; font-size: 13px; color: var(--sub); }
 
 .stations li { grid-template-columns: 1fr auto; }
 .stations .ln { display: block; font-size: 12.5px; color: var(--sub); }
@@ -481,8 +479,6 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   .hint { display: none; }
 
   .wrap { padding-top: 52px; padding-bottom: 96px; }
-  .goods li { grid-template-columns: 72px 1fr; gap: 16px; }
-  .goods img { width: 72px; height: 72px; }
   .num { font-size: 24px; }
 }
 

@@ -4,7 +4,7 @@
 // GitHub Pages は HTML も最大10分ブラウザに保存させる。古いHTMLのままだと
 // 新しいCSSやJSが読まれず表示が崩れるので、版が食い違っていたら読み直す。
 // 番号は bump.py で version.txt と一緒に上げる。
-const BUILD = '14';
+const BUILD = '15';
 fetch('version.txt', { cache: 'no-store' })
   .then((r) => (r.ok ? r.text() : null))
   .then((v) => {
@@ -40,39 +40,6 @@ if (bar && burger) {
   addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && bar.dataset.open === 'true') burger.click();
   });
-}
-
-// ---- 物販 ----------------------------------------------------------------
-const GOODS_IMG = {
-  'T-シャツ': 'goods-tshirt-1.png',
-  'シャーペン': 'goods-pen.png',
-  'トートバッグ': 'goods-tote.png',
-  'タオル': 'goods-towel.png',
-  'クリアファイル': 'goods-clearfile.png',
-};
-
-if ($('#goods-list')) {
-  load('data/goods.json').then((g) => {
-    $('#goods-place').textContent = g.place || '';
-    const ul = $('#goods-list');
-    for (const it of g.goods) {
-      const li = document.createElement('li');
-
-      const im = document.createElement('img');
-      im.src = `assets/${GOODS_IMG[it.name] || ''}`;
-      im.alt = it.name;
-      im.loading = 'lazy';
-
-      const mid = document.createElement('div');
-      const nm = document.createElement('span');
-      nm.className = 'nm';
-      nm.textContent = it.name;
-      mid.append(nm);
-
-      li.append(im, mid);
-      ul.append(li);
-    }
-  }).catch(showError);
 }
 
 // ---- 行き方 --------------------------------------------------------------
