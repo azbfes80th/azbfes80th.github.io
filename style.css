@@ -23,7 +23,7 @@
 .door[href="map.html"] .en    { view-transition-name: w-exhibitions; }
 .door[href="goods.html"] .en  { view-transition-name: w-goods; }
 .door[href="access.html"] .en { view-transition-name: w-access; }
-.p-map .title .en   { view-transition-name: w-exhibitions; }
+.p-map .title .en[data-mode="exhibit"] { view-transition-name: w-exhibitions; }
 .p-goods h1 .en     { view-transition-name: w-goods; }
 .p-access h1 .en    { view-transition-name: w-access; }
 
@@ -141,7 +141,15 @@ main { flex: 1; min-height: 0; position: relative; }
 .title {
   position: absolute; left: var(--gut); top: 22px; margin: 0; pointer-events: none;
 }
-.title .en { display: block; font-size: clamp(38px, 5.6vw, 76px); line-height: 0.92; }
+/* EXHIBITIONS と STAGE の切り替え。選んでいる方を大きく黒く、もう一方を小さく灰色に */
+.modes { display: flex; align-items: baseline; gap: 18px; pointer-events: auto; }
+.modes .en {
+  font-size: clamp(16px, 1.9vw, 24px); line-height: 0.92; color: var(--hair);
+  background: none; border: 0; padding: 0; cursor: pointer;
+  transition: font-size .45s cubic-bezier(.3, .86, .24, 1), color .3s;
+}
+.modes .en:hover { color: var(--sub); }
+.modes .en.on { font-size: clamp(38px, 5.6vw, 76px); color: var(--ink); cursor: default; }
 .title small {
   display: block; margin-top: 8px; font-size: 13px; font-weight: 400;
   color: var(--sub); letter-spacing: 0.02em;
@@ -216,7 +224,9 @@ main { flex: 1; min-height: 0; position: relative; }
   left: var(--gut); bottom: 26px; transform: none;
   width: min(380px, calc(100% - 44px));
 }
-#slot[hidden] { display: none; }
+#slot[hidden], .panel[hidden], .floors[hidden] { display: none; }
+/* ステージ表示では、会場の3Dを隠さないよう説明を左下に置く */
+.stage-mode #slot { left: var(--gut); bottom: 26px; transform: none; width: min(380px, calc(100% - 44px)); }
 .detail { padding: 15px 18px 16px; }
 .dhead { display: flex; align-items: baseline; gap: 11px; }
 .dhead .room { font-size: 30px; line-height: 1; color: var(--red); }
@@ -289,6 +299,45 @@ main { flex: 1; min-height: 0; position: relative; }
 /* この動きのときは、ページ全体の重ね合わせを止めて pick だけを動かす */
 html:active-view-transition-type(pick)::view-transition-old(root),
 html:active-view-transition-type(pick)::view-transition-new(root) { animation: none; }
+
+/* タイムテーブル */
+.tt { width: min(470px, calc(100% - 44px)); }
+.days { display: flex; gap: 2px; padding: 2px; background: var(--tint); border-radius: 980px; align-self: flex-start; }
+.days button {
+  font: inherit; font-size: 13px; line-height: 1;
+  background: none; border: 0; border-radius: 980px; color: var(--sub);
+  padding: 8px 14px; cursor: pointer;
+}
+.days button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+
+.grid { overflow-y: auto; min-height: 0; flex: 1 1 auto; }
+.g-head, .g-body { display: grid; grid-template-columns: 38px repeat(3, 1fr); gap: 4px; }
+.g-head { position: sticky; top: 0; z-index: 1; background: var(--glass); padding: 4px 0 6px; }
+.g-head span { font-size: 11.5px; color: var(--sub); text-align: center; }
+.g-body { position: relative; }
+.g-axis, .g-col { position: relative; }
+.g-axis span {
+  position: absolute; left: 0; transform: translateY(-50%);
+  font-family: var(--la); font-size: 10.5px; color: var(--sub);
+}
+.g-col { border-left: 1px solid var(--hair); }
+.g-slot {
+  position: absolute; left: 3px; right: 0;
+  display: flex; flex-direction: column; justify-content: flex-start; gap: 1px;
+  overflow: hidden; text-align: left;
+  font: inherit; color: var(--ink);
+  background: var(--tint); border: 0; border-radius: 7px;
+  padding: 4px 6px; cursor: pointer;
+  transition: background-color .2s, color .2s;
+}
+.g-slot:hover { background: #e8e8ed; }
+.g-slot.same { background: rgba(255, 59, 48, .14); }
+.g-slot.on { background: var(--red); color: #fff; }
+.g-nm { font-size: 11.5px; line-height: 1.3; font-weight: 500; }
+.g-tm { font-family: var(--la); font-size: 10px; opacity: .7; }
+
+.others { margin: 4px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--sub); line-height: 1.8; }
+.dbody .exn + .others, .dbody .exd + .exn { margin-top: 8px; }
 
 /* 展示一覧 */
 .panel {
@@ -483,7 +532,7 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   /* 一覧は上、経路は下。どちらも畳んだ状態で重ならないように離す */
   .panel { top: 14px; bottom: auto; right: var(--gut); left: var(--gut); width: auto; max-height: 46%; }
   #slot, #slot.as-route {
-    top: 68px; bottom: auto; left: var(--gut); right: var(--gut);
+    top: 106px; bottom: auto; left: var(--gut); right: var(--gut);
     width: auto; transform: none;
   }
   .dbody { max-height: 20vh; }
@@ -504,8 +553,18 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   #map[data-mode="route"] .panel { display: none; }
   #map[data-mode="route"] .rhead .chip { display: none; }
   #map[data-mode="route"] .rhead { margin-bottom: -10px; }
-  #map[data-mode="route"] #slot.as-route { top: 14px; }
-  .title { display: none; }
+  #map[data-mode="route"] #slot.as-route { top: 52px; }
+  .title { top: 12px; }
+  .title small { display: none; }
+  .modes { gap: 12px; }
+  .modes .en { font-size: 13px; }
+  .modes .en.on { font-size: 24px; }
+  .panel { top: 52px; }
+  .tt { top: 52px; bottom: auto; left: var(--gut); right: var(--gut); width: auto; max-height: 50%; }
+  /* ステージのときは階のタブがないので、説明は下に置く */
+  .stage-mode #slot { top: auto; bottom: 16px; left: var(--gut); right: var(--gut); width: auto; }
+  .stage-mode .dhead { flex-wrap: wrap; row-gap: 2px; }
+  .stage-mode .dhead .room { font-size: 24px; }
   .floors { bottom: 20px; }
   .hint { display: none; }
 

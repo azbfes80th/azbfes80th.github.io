@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを表示する。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=18';
-import { $, $$, load } from './site.js?v=18';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=22';
+import { $, $$, load } from './site.js?v=22';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -19,6 +19,7 @@ async function init() {
     load('data/extras.json'),
     load('data/food.json').catch(() => ({ rooms: {} })),
   ]);
+  const stage = await load('data/stage.json').catch(() => null);
 
   // 販売物は「110・111」のように複数の部屋にまたがる行がある
   const sales = new Map();
@@ -78,14 +79,21 @@ async function init() {
   const scene = createScene($('#stage'), floors, (d) => openDetail(d.room, d.floor, null));
 
   renderList(entries);
-  $('.title small').textContent = `展示と校舎　普通教室棟と講堂、展示${entries.length}件`;
+  const SUB_EXHIBIT = `展示と校舎　普通教室棟と講堂、展示${entries.length}件`;
+  $('#sub').textContent = SUB_EXHIBIT;
 
   $('#q').addEventListener('input', () => {
     const q = $('#q').value.trim().toLowerCase();
     $$('#list li').forEach((li) => { li.hidden = q !== '' && !li.dataset.key.includes(q); });
   });
 
-  $('.panel-toggle').addEventListener('click', () => togglePanel());
+  $('#panel .panel-toggle').addEventListener('click', () => togglePanel());
+  $('#tt .panel-toggle').addEventListener('click', () => {
+    const p = $('#tt');
+    const open = p.dataset.open !== 'true';
+    p.dataset.open = String(open);
+    $('#tt .panel-toggle').setAttribute('aria-expanded', String(open));
+  });
   togglePanel(!narrow()); // 狭い画面では畳んで3Dに場所を譲る
 
   $$('.floors button').forEach((b) => b.addEventListener('click', () => {
@@ -97,7 +105,7 @@ async function init() {
     const p = $('#panel');
     const open = force ?? p.dataset.open !== 'true';
     p.dataset.open = String(open);
-    $('.panel-toggle').setAttribute('aria-expanded', String(open));
+    $('#panel .panel-toggle').setAttribute('aria-expanded', String(open));
   }
 
   // ---- 状態 ------------------------------------------------------------
@@ -441,6 +449,175 @@ async function init() {
     }
     return foot;
   }
+
+  // ---- 展示とステージの切り替え ----------------------------------------
+  const HINT_EXHIBIT = $('#hint').textContent;
+  const HINT_STAGE = 'タイムテーブルの演目を押すと、会場が赤くなります';
+  const SUB_STAGE = 'ステージ　中庭・講堂・小ステージ（130）の3会場';
+  let mode = 'exhibit';
+
+  function switchMode(next) {
+    if (next === mode) return;
+    mode = next;
+    const st = mode === 'stage';
+    $$('.modes button').forEach((b) => {
+      const on = b.dataset.mode === mode;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-selected', String(on));
+    });
+    $('#sub').textContent = st ? SUB_STAGE : SUB_EXHIBIT;
+    $('#hint').textContent = st ? HINT_STAGE : HINT_EXHIBIT;
+    $('#panel').hidden = st;
+    $('#tt').hidden = !st;
+    $('.floors').hidden = st;
+    $('#map').classList.toggle('stage-mode', st);
+
+    // 展示側の選択は持ち越さない
+    leg.from = null; leg.to = null; viewing = null; picked = null;
+    show(null);
+    scene.setMode(mode);
+    if (!st) {
+      $$('.floors button').forEach((o) => o.classList.toggle('on', o.dataset.floor === '0'));
+      scene.showFloor(0);
+    } else {
+      renderGrid();
+    }
+    history.replaceState(null, '', st ? '#stage' : location.pathname);
+  }
+  $$('.modes button').forEach((b) => b.addEventListener('click', () => switchMode(b.dataset.mode)));
+
+  // ---- タイムテーブル ----------------------------------------------------
+  const DAY0 = 9 * 60, DAY1 = 16 * 60; // 9:00〜16:00
+  const PX = 1.15;                     // 1分あたりの高さ
+  const mins = (hm) => { const [h, m] = hm.split(':').map(Number); return h * 60 + m; };
+  const venueName = (id) => ((stage && stage.venues.find((v) => v.id === id)) || {}).name || id;
+  let day = 1;
+  let picked = null;
+
+  function renderGrid() {
+    const grid = $('#grid');
+    grid.textContent = '';
+    if (!stage) { grid.textContent = 'タイムテーブルを読み込めませんでした。'; return; }
+
+    const head = document.createElement('div');
+    head.className = 'g-head';
+    head.append(document.createElement('span'));
+    for (const v of stage.venues) {
+      const h = document.createElement('span');
+      h.textContent = v.name;
+      head.append(h);
+    }
+    grid.append(head);
+
+    const body = document.createElement('div');
+    body.className = 'g-body';
+    body.style.height = `${(DAY1 - DAY0) * PX}px`;
+
+    const axis = document.createElement('div');
+    axis.className = 'g-axis';
+    for (let t = DAY0; t <= DAY1; t += 60) {
+      const l = document.createElement('span');
+      l.style.top = `${(t - DAY0) * PX}px`;
+      l.textContent = `${t / 60}:00`;
+      axis.append(l);
+    }
+    body.append(axis);
+
+    const slots = (stage.days.find((d) => d.day === day) || { slots: [] }).slots;
+    for (const v of stage.venues) {
+      const col = document.createElement('div');
+      col.className = 'g-col';
+      for (const sl of slots.filter((x) => x.venue === v.id)) {
+        const a = mins(sl.start), b = mins(sl.end);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'g-slot';
+        btn.style.top = `${(a - DAY0) * PX}px`;
+        btn.style.height = `${(b - a) * PX - 3}px`;
+        const pr = stage.programs[sl.program] || { name: sl.program };
+        const nm = document.createElement('span');
+        nm.className = 'g-nm';
+        nm.textContent = pr.name;
+        const tm = document.createElement('span');
+        tm.className = 'g-tm';
+        tm.textContent = sl.start;
+        btn.append(nm, tm);
+        if (picked && picked.program === sl.program) btn.classList.add('same');
+        if (picked === sl) btn.classList.add('on');
+        btn.addEventListener('click', () => pickSlot(sl));
+        col.append(btn);
+      }
+      body.append(col);
+    }
+    grid.append(body);
+  }
+
+  function pickSlot(sl) {
+    picked = sl;
+    renderGrid();
+    scene.highlightVenue(sl.venue);
+    // 狭い画面では時刻表を畳んで、会場の3Dに場所を譲る
+    if (narrow()) {
+      $('#tt').dataset.open = 'false';
+      $('#tt .panel-toggle').setAttribute('aria-expanded', 'false');
+    }
+    const pr = stage.programs[sl.program] || { name: sl.program, desc: '' };
+
+    const el = document.createElement('div');
+    el.className = 'detail card';
+    const head = document.createElement('div');
+    head.className = 'dhead';
+    const num = document.createElement('span');
+    num.className = 'room disp';
+    num.textContent = sl.start;
+    const nm = document.createElement('span');
+    nm.className = 'dname';
+    nm.textContent = pr.name;
+    const vn = document.createElement('span');
+    vn.className = 'dfl';
+    vn.textContent = `${day}日目　${venueName(sl.venue)}　〜${sl.end}`;
+    head.append(num, nm, vn, closeButton(() => {
+      picked = null;
+      renderGrid();
+      scene.highlightVenue(null);
+      show(null);
+    }));
+
+    const body = document.createElement('div');
+    body.className = 'dbody';
+    if (pr.desc) {
+      const p = document.createElement('p');
+      p.className = 'exd';
+      p.textContent = pr.desc;
+      body.append(p);
+    }
+    // 同じ演目のほかの回
+    const others = [];
+    for (const d of stage.days) for (const x of d.slots) if (x.program === sl.program && x !== sl) others.push([d.day, x]);
+    if (others.length) {
+      const h = document.createElement('div');
+      h.className = 'exn';
+      h.textContent = 'ほかの回';
+      body.append(h);
+      const ul = document.createElement('ul');
+      ul.className = 'others';
+      for (const [d, x] of others) {
+        const li = document.createElement('li');
+        li.textContent = `${d}日目　${x.start}〜${x.end}　${venueName(x.venue)}`;
+        ul.append(li);
+      }
+      body.append(ul);
+    }
+    el.append(head, body);
+    show(el);
+  }
+
+  $$('.days button').forEach((b) => b.addEventListener('click', () => {
+    day = Number(b.dataset.day);
+    $$('.days button').forEach((o) => o.classList.toggle('on', o === b));
+    renderGrid();
+  }));
+  if (location.hash === '#stage') switchMode('stage');
 
   // ---- 一覧 --------------------------------------------------------------
   function renderList(all) {

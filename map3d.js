@@ -41,6 +41,10 @@ const NECK_ANX = { x: OUT, z: ANX.z + 1.5, w: ANX.x - OUT, d: 3.2 };
 
 // 講堂。学校サイトに「2階席を含め約1500名収容」とある。内部に床を持たない1室として置く
 const HALL = { x: OUT + 7, z: 8, w: 29, d: 35, h: FH * 3.2 };
+// ステージ。中庭は1階平面図の黄緑の区画（西辺の111・112の前）。講堂の舞台と2階席の位置は推定
+const COURT_STAGE = { x: IN0 + 0.4, z: IN0 + 8, w: 5, d: 12, h: 1.1 };
+const HALL_STAGE = { x: HALL.x + HALL.w - 7, z: HALL.z + 5, w: 6, d: HALL.d - 10, h: 1.2 };
+const HALL_BALCONY = { x: HALL.x + 1, z: HALL.z + 2, w: 8, d: HALL.d - 4, y: FH * 1.3 };
 
 // 塔屋。北西の角の階段室の真上に立ち、屋上から1層分ほど突き出る。
 // 中庭側の面を45度に切り、そこに星章を付ける。EVのある南東の角とは対角。
@@ -470,6 +474,35 @@ export function createScene(canvas, floors, onPick) {
     world.add(seg([V(OUT, 0.1, COR_S), V(HALL.x, 0.1, COR_S), V(OUT, FH, COR_S), V(HALL.x, FH, COR_S)], mat.hall));
   }
 
+  // ---- ステージの会場 ----
+  const venues = {};
+  const venueBase = 0.16;
+  function venueBox(id, r, h) {
+    const mesh = new THREE.Mesh(
+      new THREE.BoxGeometry(r.w, h, r.d),
+      new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: venueBase, depthWrite: false }),
+    );
+    mesh.position.set(r.x + r.w / 2, h / 2 + 0.05, r.z + r.d / 2);
+    const edge = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mesh.geometry),
+      new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.7 }),
+    );
+    edge.position.copy(mesh.position);
+    mesh.userData.venue = id;
+    world.add(mesh, edge);
+    venues[id] = { mesh, edge };
+  }
+  venueBox('court', COURT_STAGE, COURT_STAGE.h);
+  venueBox('hall', HALL_STAGE, HALL_STAGE.h);
+  // 講堂の2階席は輪郭だけ
+  const balcony = loop(rectPts(HALL_BALCONY, HALL_BALCONY.y), mat.hall);
+  world.add(balcony);
+  const showVenues = (on) => {
+    for (const v of Object.values(venues)) { v.mesh.visible = on; v.edge.visible = on; }
+    balcony.visible = on;
+  };
+  showVenues(false);
+
   // ---- 操作 ----
   let routeLine = null;
   function drawRoute(steps) {
@@ -538,6 +571,55 @@ export function createScene(canvas, floors, onPick) {
   new ResizeObserver(resize).observe(canvas);
   resize();
 
+  // ---- 展示とステージの切り替え ----
+  const VIEWS = {
+    exhibit: { target: controls.target.clone(), pos: camera.position.clone() },
+    // 右に時刻表が重なるので、狙いを東に寄せて会場を画面の左寄りに置く
+    stage: { target: V(MID + 34, 2, MID - 6), pos: V(MID + 74, 74, MID + 76) },
+  };
+  let tween = null;
+  let stageMode = false;
+  const smallRoom = () => roomMeshes.find((m) => m.userData.floor === 1 && m.userData.room === '130');
+
+  function setMode(mode) {
+    stageMode = mode === 'stage';
+    highlight({});
+    drawRoute(null);
+    for (const g of floorGroups) {
+      for (const o of g.children) {
+        if (!o.material) continue;
+        if (o.isMesh) { o.material.opacity = stageMode ? 0.01 : 0.05; continue; }
+        if (o.material === mat.sash) { o.visible = !stageMode; continue; }
+        if (o.material === mat.slab) continue;
+        if (o.userData.circ) { o.material.opacity = stageMode ? 0.1 : 0.85; continue; }
+        o.material.opacity = stageMode ? 0.05 : 0.22;
+      }
+    }
+    showVenues(stageMode);
+    const sr = smallRoom();
+    if (sr && stageMode) { sr.material.opacity = venueBase; sr.userData.edge.material.opacity = 0.7; }
+    const v = VIEWS[stageMode ? 'stage' : 'exhibit'];
+    tween = { t0: null, from: { target: controls.target.clone(), pos: camera.position.clone() }, to: v };
+  }
+
+  // id は court / hall / small。null で全部を元に戻す
+  function highlightVenue(id) {
+    for (const [k, v] of Object.entries(venues)) {
+      const on = k === id;
+      v.mesh.material.color.setHex(on ? RED : INK);
+      v.mesh.material.opacity = on ? 0.55 : venueBase;
+      v.edge.material.color.setHex(on ? RED : INK);
+    }
+    const sr = smallRoom();
+    if (sr) {
+      const on = id === 'small';
+      sr.material.color.setHex(on ? RED : INK);
+      sr.material.opacity = on ? 0.55 : (stageMode ? venueBase : 0.05);
+      sr.userData.edge.material.color.setHex(on ? RED : INK);
+      sr.userData.edge.material.opacity = on ? 1 : (stageMode ? 0.7 : 0.22);
+    }
+  }
+
   // 読み込み時の一度きりの動き: 下の階から順に立ち上がる
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let t0 = null;
@@ -553,10 +635,18 @@ export function createScene(canvas, floors, onPick) {
         g.position.y = -(i + 1) * 12 * (1 - p) ** 3;
       });
     }
+    if (tween) {
+      if (tween.t0 === null) tween.t0 = t;
+      const k = Math.min(1, (t - tween.t0) / 900);
+      const ease = 1 - (1 - k) ** 3;
+      controls.target.lerpVectors(tween.from.target, tween.to.target, ease);
+      camera.position.lerpVectors(tween.from.pos, tween.to.pos, ease);
+      if (k >= 1) tween = null;
+    }
     controls.update();
     renderer.render(scene, camera);
   }
   requestAnimationFrame(tick);
 
-  return { drawRoute, highlight, showFloor, camera, controls };
+  return { drawRoute, highlight, showFloor, setMode, highlightVenue, camera, controls };
 }

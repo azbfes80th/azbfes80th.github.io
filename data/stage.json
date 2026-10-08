@@ -1,0 +1,448 @@
+{
+ "venues": [
+  {
+   "id": "court",
+   "name": "中庭"
+  },
+  {
+   "id": "hall",
+   "name": "講堂"
+  },
+  {
+   "id": "small",
+   "name": "小ステージ",
+   "room": "130"
+  }
+ ],
+ "programs": {
+  "1": {
+   "name": "アザライブ",
+   "desc": "麻布のスクールアイドルがみんなのためにライブします。"
+  },
+  "2": {
+   "name": "H1",
+   "desc": "高1コンビが”最も面白い麻布生”を目指し全力の漫才対決"
+  },
+  "3": {
+   "name": "ボディビル",
+   "desc": "麻布最強の肉体を決めます。"
+  },
+  "4": {
+   "name": "防衛軍",
+   "desc": "文化祭を侵略者から守ります。"
+  },
+  "5": {
+   "name": "軽音",
+   "desc": "軽音部のバンドによる最高の演奏を届けます。"
+  },
+  "6": {
+   "name": "ダンス",
+   "desc": "様々なジャンルのかっこいいダンスを踊ります。"
+  },
+  "7": {
+   "name": "こうきー海賊団",
+   "desc": "KP〜"
+  },
+  "8": {
+   "name": "VS長",
+   "desc": "長が倒されます。ちなみに笑えます。来てください。〜"
+  },
+  "9": {
+   "name": "アザグルイ",
+   "desc": "お天気占いの方法を展示しています。"
+  },
+  "10": {
+   "name": "ラップ",
+   "desc": "ガチでMCバトルします。ぶっかませ〜"
+  },
+  "11": {
+   "name": "Ms.Mr",
+   "desc": "麻布1の美男美女を決めます。"
+  },
+  "12": {
+   "name": "御三家対談",
+   "desc": "御三家で対談します。"
+  },
+  "13": {
+   "name": "演劇",
+   "desc": "講堂にて演劇部による創作脚本の公演を行う。"
+  },
+  "14": {
+   "name": "今日好き",
+   "desc": "麻布生による麻布生のための恋愛リアリティーショー"
+  },
+  "15": {
+   "name": "教師演芸会",
+   "desc": "いつもと違った教員の姿を見れちゃう。"
+  },
+  "16": {
+   "name": "DJ",
+   "desc": "講堂全体揺らします。みんなも歌って踊ってください。"
+  },
+  "17": {
+   "name": "討論",
+   "desc": "討論します。"
+  },
+  "18": {
+   "name": "ダービー",
+   "desc": "競馬の予想をします。"
+  },
+  "19": {
+   "name": "フェスコン",
+   "desc": "管弦楽部がオーケストラで優雅なクラシック音楽を演奏します。"
+  },
+  "20": {
+   "name": "のど自慢",
+   "desc": "歌のうまさを競います。"
+  },
+  "21": {
+   "name": "ポケモン",
+   "desc": "ポケモンカードゲームの対戦を行います。"
+  },
+  "22": {
+   "name": "弾き語り",
+   "desc": "弾き語りで観客を魅了します。"
+  },
+  "23": {
+   "name": "蟲神器",
+   "desc": "蟲神器というカードゲームの対戦を行います。"
+  },
+  "24": {
+   "name": "お天気占い師",
+   "desc": "お天気占いをします。絶対に当てます。"
+  }
+ },
+ "days": [
+  {
+   "day": 1,
+   "slots": [
+    {
+     "venue": "court",
+     "start": "09:00",
+     "end": "09:30",
+     "program": "1"
+    },
+    {
+     "venue": "court",
+     "start": "09:30",
+     "end": "10:30",
+     "program": "2"
+    },
+    {
+     "venue": "court",
+     "start": "10:30",
+     "end": "11:30",
+     "program": "3"
+    },
+    {
+     "venue": "court",
+     "start": "11:30",
+     "end": "12:30",
+     "program": "4"
+    },
+    {
+     "venue": "court",
+     "start": "12:30",
+     "end": "13:30",
+     "program": "2"
+    },
+    {
+     "venue": "court",
+     "start": "13:30",
+     "end": "15:00",
+     "program": "5"
+    },
+    {
+     "venue": "court",
+     "start": "15:00",
+     "end": "16:00",
+     "program": "6"
+    },
+    {
+     "venue": "hall",
+     "start": "09:00",
+     "end": "10:30",
+     "program": "13"
+    },
+    {
+     "venue": "hall",
+     "start": "10:30",
+     "end": "11:30",
+     "program": "6"
+    },
+    {
+     "venue": "hall",
+     "start": "11:30",
+     "end": "12:30",
+     "program": "14"
+    },
+    {
+     "venue": "hall",
+     "start": "12:30",
+     "end": "13:00",
+     "program": "1"
+    },
+    {
+     "venue": "hall",
+     "start": "13:00",
+     "end": "16:00",
+     "program": "15"
+    },
+    {
+     "venue": "small",
+     "start": "09:00",
+     "end": "13:00",
+     "program": "5"
+    },
+    {
+     "venue": "small",
+     "start": "13:30",
+     "end": "14:00",
+     "program": "20"
+    },
+    {
+     "venue": "small",
+     "start": "14:00",
+     "end": "15:15",
+     "program": "21"
+    },
+    {
+     "venue": "small",
+     "start": "15:15",
+     "end": "16:00",
+     "program": "22"
+    }
+   ]
+  },
+  {
+   "day": 2,
+   "slots": [
+    {
+     "venue": "court",
+     "start": "09:00",
+     "end": "10:00",
+     "program": "7"
+    },
+    {
+     "venue": "court",
+     "start": "10:00",
+     "end": "11:00",
+     "program": "8"
+    },
+    {
+     "venue": "court",
+     "start": "11:00",
+     "end": "11:30",
+     "program": "1"
+    },
+    {
+     "venue": "court",
+     "start": "11:30",
+     "end": "12:30",
+     "program": "9"
+    },
+    {
+     "venue": "court",
+     "start": "12:30",
+     "end": "13:30",
+     "program": "10"
+    },
+    {
+     "venue": "court",
+     "start": "13:30",
+     "end": "14:30",
+     "program": "6"
+    },
+    {
+     "venue": "court",
+     "start": "14:30",
+     "end": "16:00",
+     "program": "5"
+    },
+    {
+     "venue": "hall",
+     "start": "09:00",
+     "end": "09:30",
+     "program": "16"
+    },
+    {
+     "venue": "hall",
+     "start": "09:30",
+     "end": "10:30",
+     "program": "17"
+    },
+    {
+     "venue": "hall",
+     "start": "10:30",
+     "end": "11:00",
+     "program": "18"
+    },
+    {
+     "venue": "hall",
+     "start": "11:00",
+     "end": "12:00",
+     "program": "6"
+    },
+    {
+     "venue": "hall",
+     "start": "12:00",
+     "end": "12:30",
+     "program": "1"
+    },
+    {
+     "venue": "hall",
+     "start": "12:30",
+     "end": "14:00",
+     "program": "5"
+    },
+    {
+     "venue": "hall",
+     "start": "14:00",
+     "end": "15:30",
+     "program": "16"
+    },
+    {
+     "venue": "small",
+     "start": "09:00",
+     "end": "12:00",
+     "program": "5"
+    },
+    {
+     "venue": "small",
+     "start": "12:30",
+     "end": "13:00",
+     "program": "18"
+    },
+    {
+     "venue": "small",
+     "start": "13:00",
+     "end": "13:30",
+     "program": "20"
+    },
+    {
+     "venue": "small",
+     "start": "13:30",
+     "end": "14:30",
+     "program": "21"
+    },
+    {
+     "venue": "small",
+     "start": "14:30",
+     "end": "16:00",
+     "program": "23"
+    }
+   ]
+  },
+  {
+   "day": 3,
+   "slots": [
+    {
+     "venue": "court",
+     "start": "09:00",
+     "end": "11:00",
+     "program": "11"
+    },
+    {
+     "venue": "court",
+     "start": "11:00",
+     "end": "12:00",
+     "program": "12"
+    },
+    {
+     "venue": "court",
+     "start": "12:00",
+     "end": "13:00",
+     "program": "10"
+    },
+    {
+     "venue": "court",
+     "start": "13:00",
+     "end": "13:30",
+     "program": "1"
+    },
+    {
+     "venue": "court",
+     "start": "13:30",
+     "end": "15:00",
+     "program": "5"
+    },
+    {
+     "venue": "court",
+     "start": "15:00",
+     "end": "16:00",
+     "program": "6"
+    },
+    {
+     "venue": "hall",
+     "start": "09:00",
+     "end": "11:00",
+     "program": "19"
+    },
+    {
+     "venue": "hall",
+     "start": "11:00",
+     "end": "12:30",
+     "program": "13"
+    },
+    {
+     "venue": "hall",
+     "start": "12:30",
+     "end": "13:15",
+     "program": "5"
+    },
+    {
+     "venue": "hall",
+     "start": "13:15",
+     "end": "14:00",
+     "program": "6"
+    },
+    {
+     "venue": "hall",
+     "start": "14:00",
+     "end": "14:30",
+     "program": "1"
+    },
+    {
+     "venue": "hall",
+     "start": "14:30",
+     "end": "15:30",
+     "program": "16"
+    },
+    {
+     "venue": "small",
+     "start": "09:00",
+     "end": "12:00",
+     "program": "5"
+    },
+    {
+     "venue": "small",
+     "start": "12:30",
+     "end": "13:00",
+     "program": "18"
+    },
+    {
+     "venue": "small",
+     "start": "13:00",
+     "end": "14:15",
+     "program": "22"
+    },
+    {
+     "venue": "small",
+     "start": "14:15",
+     "end": "15:30",
+     "program": "21"
+    },
+    {
+     "venue": "small",
+     "start": "15:45",
+     "end": "16:00",
+     "program": "24"
+    }
+   ]
+  }
+ ],
+ "extra": {
+  "title": "部内試合",
+  "desc": "2日目の15時から16時、体育館にてバトミントン部の部内試合を開催します。今年初の試みになります。麻布バドミントン部のハイレベルな試合を展開しております。是非お越しください。"
+ }
+}
