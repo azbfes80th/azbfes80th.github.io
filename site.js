@@ -4,7 +4,7 @@
 // GitHub Pages は HTML も最大10分ブラウザに保存させる。古いHTMLのままだと
 // 新しいCSSやJSが読まれず表示が崩れるので、版が食い違っていたら読み直す。
 // 番号は bump.py で version.txt と一緒に上げる。
-const BUILD = '6';
+const BUILD = '7';
 fetch('version.txt', { cache: 'no-store' })
   .then((r) => (r.ok ? r.text() : null))
   .then((v) => {

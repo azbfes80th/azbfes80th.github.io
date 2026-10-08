@@ -35,7 +35,7 @@ const ANNEX = { x: OUT + COR, z: IN0, w: CD, d: 2 * CW };            // 東へ
 // 講堂。学校サイトに「2階席を含め約1500名収容」とある。内部に床を持たない1室として置く
 const HALL = { x: OUT + 7, z: 8, w: 29, d: 35, h: FH * 3.2 };
 
-// 塔屋。中庭の写真にある車寄せの上の塔。位置は写真から目分量で置いた
+// 塔屋。中庭の内側の角に建ち、4階より上に突き出る。EVのある南東の対角なので北西の角
 const TOWER = { w: 5.2, d: 4.4, h: TOP + 7.5 };
 
 // ---- 平面上の矩形 --------------------------------------------------------
@@ -403,31 +403,34 @@ export function createScene(canvas, floors, onPick) {
     world.add(seg(p, mat.shell));
   }
 
-  // 塔屋と星章。中庭に面した車寄せの上に立つ
+  // 塔屋と星章。中庭の内側の北西の角に建ち、中庭へ斜めに face を向ける
   {
-    const tx = IN0 + SPAN / 2, tz = OUT - CD - COR / 2;
+    const g = new THREE.Group();
+    g.position.set(IN0 + 1.4, 0, IN0 + 1.4);
+    g.rotation.y = Math.PI * 1.25; // -z 面が中庭の中心を向く向き
+    world.add(g);
+
     const t = new THREE.Mesh(
       new THREE.BoxGeometry(TOWER.w, TOWER.h, TOWER.d),
       new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: 0.04, depthWrite: false }),
     );
-    t.position.set(tx, TOWER.h / 2, tz);
-    world.add(t);
+    t.position.y = TOWER.h / 2;
+    g.add(t);
     const te = new THREE.LineSegments(new THREE.EdgesGeometry(t.geometry), mat.shell);
     te.position.copy(t.position);
-    world.add(te);
+    g.add(te);
 
-    // 麻布学園の星章を塔屋の中庭側に描く
+    // 麻布学園の星章を中庭側の面に描く
     const star = [];
-    const R = 1.5, r2 = 0.62, sy = TOP + 4.6, sz = tz - TOWER.d / 2 - 0.05;
+    const R = 1.5, r2 = 0.62, sy = TOP + 4.6, sz = -TOWER.d / 2 - 0.05;
     for (let i = 0; i < 12; i++) {
       const a = (Math.PI / 6) * i - Math.PI / 2;
-      const rad = i % 2 === 0 ? R : r2;
-      star.push(V(tx + Math.cos(a) * rad, sy + Math.sin(a) * rad, sz));
+      star.push(V(Math.cos(a) * (i % 2 === 0 ? R : r2), sy + Math.sin(a) * (i % 2 === 0 ? R : r2), sz));
     }
-    world.add(loop(star, mat.shell));
+    g.add(loop(star, mat.shell));
 
     // 車寄せの庇
-    world.add(loop(rectPts({ x: tx - 4.2, z: tz - 3.4, w: 8.4, d: 3.4 }, 4.2), mat.shell));
+    g.add(loop(rectPts({ x: -4.2, z: -3.6, w: 8.4, d: 3.6 }, 4.2), mat.shell));
   }
 
   // 講堂
