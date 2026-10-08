@@ -214,7 +214,7 @@ export function describePath(path, nameOf) {
       continue;
     }
 
-    // 同じ階を歩く区間をまとめ、曲がり角と目印を1行で出す
+    // 同じ階を歩く区間をまとめ、曲がり角と目印を1行にする
     let j = i;
     while (j + 1 < path.length && path[j + 1].f === path[j].f) j++;
     const run = path.slice(i - 1, j + 1);

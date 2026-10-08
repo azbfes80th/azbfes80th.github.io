@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>展示と校舎 | 第80回麻布学園文化祭</title>
-<meta name="description" content="校舎の3Dモデルで展示を探し、展示から展示への最短経路を出します。">
+<meta name="description" content="校舎の3Dモデルから展示を探し、展示から展示への最短経路を調べられます。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 <script type="importmap">
 {"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<p class="demo-note">第80回文化祭実行委員長選挙のためのデモです。掲載内容は第79回の公開情報で、公式サイトではありません。</p>
+<p class="demo-note">第80回文化祭実行委員長選挙のためのデモです。公式サイトではありません。</p>
 
 <header class="bar">
   <a class="mark disp" href="index.html"><span class="mark-n">80th</span> AFes demo site</a>
@@ -36,7 +36,7 @@
   <section id="map">
     <canvas id="stage"></canvas>
 
-    <h1 class="title"><span class="en disp">EXHIBITIONS</span><small>展示と校舎　普通教室棟と講堂、展示49室</small></h1>
+    <h1 class="title"><span class="en disp">EXHIBITIONS</span><small>展示と校舎　普通教室棟と講堂、展示96件</small></h1>
 
     <aside class="panel card" id="panel" data-open="true">
       <button class="panel-toggle" aria-expanded="true">展示一覧</button>
@@ -56,13 +56,13 @@
       <button data-floor="4">4F</button>
     </div>
 
-    <p class="hint">一覧か3Dの部屋を押すと展示が出ます。黄色が階段とエレベーター。</p>
+    <p class="hint">一覧か3Dの部屋を押すと説明を見られます。黄色は階段とエレベーター</p>
   </section>
 </main>
 
 <dialog id="sheet" aria-label="展示の詳細"></dialog>
 
-<script type="module" src="site.js?v=10"></script>
-<script type="module" src="app.js?v=10"></script>
+<script type="module" src="site.js?v=11"></script>
+<script type="module" src="app.js?v=11"></script>
 </body>
 </html>

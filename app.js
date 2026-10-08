@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
-// 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを出す。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=10';
-import { $, $$, load } from './site.js?v=10';
+// 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを表示する。
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=11';
+import { $, $$, load } from './site.js?v=11';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -32,7 +32,7 @@ async function init() {
   for (const d of floorList) floors[d.floor] = d;
 
   // フロンティア展示は展示の名前ではなく、小さな展示が集まる場所の呼び名。
-  // 平面図の部屋名のままだと8部屋とも同じ名前になるので、中の展示を出す。
+  // 平面図の部屋名のままだと8部屋とも同じ名前になるので、中の展示を並べる。
   const inside = new Map();
   for (const x of extras.frontier || []) {
     if (!inside.has(x.room)) inside.set(x.room, []);
@@ -289,7 +289,7 @@ async function init() {
     art.append(body);
     const foot = document.createElement('p');
     foot.className = 'sfoot';
-    foot.textContent = '第79回文化祭パンフレットより。第80回の内容は未定です。';
+    foot.textContent = '出典は第79回文化祭のパンフレットです。第80回の内容は未定です。';
     art.append(foot);
 
     sheet.replaceChildren(art);
@@ -396,7 +396,7 @@ async function init() {
       scene.drawRoute(null);
       const p = document.createElement('p');
       p.className = 'rnote';
-      p.textContent = '経路が見つかりません。階段を使わない条件を外すと出る場合があります。';
+      p.textContent = '経路が見つかりません。「階段を使わない」を外すと見つかることがあります。';
       el.append(p, routeFoot(null));
       return el;
     }
