@@ -411,6 +411,15 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
 .lede { margin: 0 0 64px; color: var(--sub); font-size: 17px; line-height: 1.6; }
 .foot { margin: 64px 0 0; color: var(--sub); font-size: 12.5px; }
 
+.goods li { grid-template-columns: auto 1fr auto; }
+.goods .pics { display: flex; gap: 6px; }
+.goods img {
+  height: 92px; width: auto; max-width: 92px; object-fit: contain;
+  background: var(--tint); border-radius: 10px;
+}
+.goods .nm { font-size: 17px; }
+.goods .note { display: block; font-size: 13px; color: var(--sub); }
+
 .prose { max-width: 36em; }
 .prose p { margin: 0 0 18px; font-size: 16px; line-height: 1.9; }
 
@@ -479,6 +488,9 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   }
   .dbody { max-height: 20vh; }
   .hero { min-height: 62vh; }
+  .goods li { gap: 14px; }
+  .goods .pics { gap: 4px; }
+  .goods img { height: 56px; max-width: 56px; border-radius: 8px; }
   .sns a { width: 38px; height: 38px; }
   .sns svg { width: 17px; height: 17px; }
   .door { padding: 26px 0; }
