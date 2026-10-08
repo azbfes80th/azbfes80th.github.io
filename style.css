@@ -384,6 +384,23 @@ body.home main { overflow-y: auto; }
   font-size: 12.5px; line-height: 1.8; color: var(--sub);
 }
 
+/* ホームの右下。文化祭の公式アカウント */
+.sns {
+  position: fixed; right: var(--gut); bottom: var(--gut); z-index: 20;
+  display: flex; gap: 10px;
+}
+.sns a {
+  display: grid; place-items: center; width: 42px; height: 42px;
+  border-radius: 50%; color: var(--ink);
+  background: var(--glass);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.1);
+  transition: color .2s, transform .2s;
+}
+.sns a:hover { color: var(--red); transform: translateY(-2px); text-decoration: none; }
+.sns svg { width: 19px; height: 19px; }
+
 /* ---- 読み物のページ ---- */
 .wrap { max-width: 740px; margin: 0 auto; padding: 84px var(--gut) 140px; }
 
@@ -462,6 +479,8 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   }
   .dbody { max-height: 20vh; }
   .hero { min-height: 62vh; }
+  .sns a { width: 38px; height: 38px; }
+  .sns svg { width: 17px; height: 17px; }
   .door { padding: 26px 0; }
   .door .ja { grid-column: 1; }
   #sheet { max-height: 86vh; border-radius: 16px; }

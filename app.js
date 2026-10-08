@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを表示する。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=15';
-import { $, $$, load } from './site.js?v=15';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=16';
+import { $, $$, load } from './site.js?v=16';
 
 const FLOORS = [1, 2, 3, 4];
 
