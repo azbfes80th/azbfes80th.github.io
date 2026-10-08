@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを出す。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=8';
-import { $, $$, load } from './site.js?v=8';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=9';
+import { $, $$, load } from './site.js?v=9';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -14,10 +14,20 @@ init().catch((err) => {
 });
 
 async function init() {
-  const [floorList, extras] = await Promise.all([
+  const [floorList, extras, food] = await Promise.all([
     Promise.all(FLOORS.map((f) => load(`data/floor${f}.json`))),
     load('data/extras.json'),
+    load('data/food.json').catch(() => ({ rooms: {} })),
   ]);
+
+  // 販売物は「110・111」のように複数の部屋にまたがる行がある
+  const sales = new Map();
+  for (const x of extras.sales || []) {
+    for (const rm of String(x.room).split('・')) {
+      if (!sales.has(rm)) sales.set(rm, []);
+      sales.get(rm).push(x);
+    }
+  }
   const floors = {};
   for (const d of floorList) floors[d.floor] = d;
 
@@ -190,6 +200,14 @@ async function init() {
 
     const act = document.createElement('div');
     act.className = 'dact';
+
+    const more = document.createElement('button');
+    more.type = 'button';
+    more.className = 'link more';
+    more.textContent = '展示詳細';
+    more.addEventListener('click', () => openSheet(r));
+    act.append(more);
+
     for (const [which, label] of [['from', 'ここから出発'], ['to', 'ここへ行く']]) {
       const b = document.createElement('button');
       b.type = 'button';
@@ -211,6 +229,111 @@ async function init() {
     x.textContent = '×';
     x.addEventListener('click', fn);
     return x;
+  }
+
+  // ---- 展示詳細 ----------------------------------------------------------
+  // 説明、メニュー、販売物を1枚にまとめる。<dialog> なので Esc と背景も標準の動き
+  const sheet = $('#sheet');
+  sheet.addEventListener('click', (e) => { if (e.target === sheet) sheet.close(); });
+
+  function openSheet(r) {
+    const art = document.createElement('article');
+
+    const head = document.createElement('header');
+    const num = document.createElement('span');
+    num.className = 'room disp';
+    num.textContent = r.room;
+    const nm = document.createElement('span');
+    nm.className = 'dname';
+    nm.textContent = r.space || r.exhibits[0].name;
+    const fl = document.createElement('span');
+    fl.className = 'dfl';
+    fl.textContent = `${r.floor}階`;
+    head.append(num, nm, fl, closeButton(() => sheet.close()));
+    art.append(head);
+
+    const body = document.createElement('div');
+    body.className = 'sbody';
+
+    const many = r.exhibits.length > 1;
+    for (const ex of r.exhibits) {
+      const d = document.createElement('div');
+      d.className = 'ex';
+      if (many) { // 1件だけなら見出しに同じ名前が出ているので繰り返さない
+        const n = document.createElement('div');
+        n.className = 'exn';
+        n.textContent = ex.name;
+        d.append(n);
+      }
+      if (ex.desc) {
+        const p = document.createElement('p');
+        p.className = 'exd';
+        p.textContent = ex.desc;
+        d.append(p);
+      }
+      body.append(d);
+    }
+
+    const menu = food.rooms && food.rooms[r.room];
+    if (menu && menu.items && menu.items.length) {
+      body.append(section('メニュー', menu.items.map((it) => priceRow(it.item, it.price, it.note, it.sub))));
+      if (food.allergyNote) body.append(note(food.allergyNote));
+      if (food.note) body.append(note(food.note));
+    }
+
+    const sold = sales.get(r.room);
+    if (sold && sold.length) {
+      body.append(section('販売物', sold.map((it) => priceRow(it.item, it.price, '', false))));
+    }
+
+    art.append(body);
+    const foot = document.createElement('p');
+    foot.className = 'sfoot';
+    foot.textContent = '第79回文化祭パンフレットより。第80回の内容は未定です。';
+    art.append(foot);
+
+    sheet.replaceChildren(art);
+    sheet.showModal();
+  }
+
+  function section(title, rows) {
+    const sec = document.createElement('section');
+    const h = document.createElement('h4');
+    h.textContent = title;
+    sec.append(h, ...rows);
+    return sec;
+  }
+
+  function note(text) {
+    const p = document.createElement('p');
+    p.className = 'snote';
+    p.textContent = text;
+    return p;
+  }
+
+  function priceRow(name, price, allergy, sub) {
+    const row = document.createElement('div');
+    row.className = sub ? 'prow sub' : 'prow';
+    const left = document.createElement('span');
+    left.className = 'pname';
+    left.textContent = name;
+    if (allergy) {
+      const a = document.createElement('span');
+      a.className = 'palg';
+      a.textContent = allergy;
+      left.append(a);
+    }
+    row.append(left);
+    if (price != null) {
+      const v = document.createElement('span');
+      v.className = 'pval disp';
+      v.append(price.toLocaleString('ja-JP'));
+      const yen = document.createElement('small');
+      yen.textContent = '円';
+      v.append(yen);
+      row.append(v);
+    }
+    return row;
   }
 
   // ---- 道順 --------------------------------------------------------------

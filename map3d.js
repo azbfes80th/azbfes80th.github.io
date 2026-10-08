@@ -433,12 +433,6 @@ export function createScene(canvas, floors, onPick) {
       star.push(V(Math.cos(a) * rad, sy + Math.sin(a) * rad, sz));
     }
     g.add(loop(star, mat.shell));
-
-    // 3階あたりで一段せり出す持ち送り
-    g.add(loop(rectPts({ x: -TOWER.w / 2 - 0.5, z: -TOWER.d / 2 - 0.9, w: TOWER.w + 1, d: 0.9 }, FH * 2.2), mat.shell));
-
-    // 車寄せの庇
-    g.add(loop(rectPts({ x: -3.8, z: -TOWER.d / 2 - 3.4, w: 7.6, d: 3.4 }, 4.0), mat.shell));
   }
 
   // 講堂
