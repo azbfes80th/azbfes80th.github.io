@@ -4,6 +4,29 @@
 
 @view-transition { navigation: auto; }
 
+/* ページ間の移動。押した見出しの語だけを白地に残し、次のページの見出しの位置と
+   大きさまで動かす。ほかの部分は先に消えて、語が着いてから現れる。 */
+::view-transition-old(root) { animation: page-out .2s ease-in both; }
+::view-transition-new(root) { animation: page-in .34s .26s ease-out both; }
+@keyframes page-out { to { opacity: 0; } }
+@keyframes page-in { from { opacity: 0; } }
+
+::view-transition-group(w-exhibitions),
+::view-transition-group(w-goods),
+::view-transition-group(w-access) {
+  z-index: 10;
+  animation-duration: .62s;
+  animation-timing-function: cubic-bezier(.26, .9, .22, 1);
+}
+
+/* ホームの3つの入口と、各ページの見出しを同じ名前で結ぶ */
+.door[href="map.html"] .en    { view-transition-name: w-exhibitions; }
+.door[href="goods.html"] .en  { view-transition-name: w-goods; }
+.door[href="access.html"] .en { view-transition-name: w-access; }
+.p-map .title .en   { view-transition-name: w-exhibitions; }
+.p-goods h1 .en     { view-transition-name: w-goods; }
+.p-access h1 .en    { view-transition-name: w-access; }
+
 :root {
   --bg:    #ffffff;
   --ink:   #1d1d1f;
