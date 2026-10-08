@@ -1,12 +1,16 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=2';
-import { $, $$, load } from './site.js?v=2';
+// 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを出す。
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=3';
+import { $, $$, load } from './site.js?v=3';
 
 const FLOORS = [1, 2, 3, 4];
 
 init().catch((err) => {
   console.error(err);
-  $('#result').textContent = `読み込みに失敗しました。${err.message}`;
+  const p = document.createElement('p');
+  p.className = 'hint';
+  p.textContent = `読み込みに失敗しました。${err.message}`;
+  $('#map').append(p);
 });
 
 async function init() {
@@ -40,6 +44,12 @@ async function init() {
   }
   rooms.sort((a, b) => a.room.localeCompare(b.room, 'en', { numeric: true }));
   const findRoom = (room, floor) => rooms.find((x) => x.room === room && x.floor === floor);
+  // 道順の目印に使う。階が分からない場合は部屋番号だけで引く
+  const nameOf = (room, floor) => {
+    const r = findRoom(room, floor) || rooms.find((x) => x.room === room);
+    if (!r) return '';
+    return r.space || r.exhibits[0].name;
+  };
 
   // 一覧は展示ごとに1行。1部屋に複数の展示が入ることがある
   const entries = [];
@@ -57,22 +67,12 @@ async function init() {
   });
 
   $('.panel-toggle').addEventListener('click', () => togglePanel());
-  const narrow = matchMedia('(max-width: 820px)').matches;
-  togglePanel(!narrow); // 狭い画面では一覧を畳んで3Dに場所を譲る
+  togglePanel(!matchMedia('(max-width: 820px)').matches); // 狭い画面では畳んで3Dに場所を譲る
 
   $$('.floors button').forEach((b) => b.addEventListener('click', () => {
     $$('.floors button').forEach((o) => o.classList.toggle('on', o === b));
     scene.showFloor(Number(b.dataset.floor));
   }));
-
-  $('#nostairs').addEventListener('change', drawRoute);
-  $('#clear').addEventListener('click', () => {
-    leg.from = null; leg.to = null;
-    paintLegs();
-    $('#result').textContent = '';
-    scene.drawRoute(null);
-    scene.highlight([]);
-  });
 
   function togglePanel(force) {
     const p = $('#panel');
@@ -81,14 +81,67 @@ async function init() {
     $('.panel-toggle').setAttribute('aria-expanded', String(open));
   }
 
-  // ---- 展示の説明 ------------------------------------------------------
-  function label(room, floor) {
-    const r = findRoom(room, floor);
-    if (!r) return room;
-    return r.space || r.exhibits[0].name;
+  // ---- 状態 ------------------------------------------------------------
+  const leg = { from: null, to: null };
+  let noStairs = false;
+  let viewing = null; // 説明を開いている部屋
+
+  function paintRooms() {
+    const paint = {};
+    if (viewing) paint[`${viewing.floor}:${viewing.room}`] = 'red';
+    if (leg.from) paint[`${leg.from.floor}:${leg.from.room}`] = 'red';
+    if (leg.to) paint[`${leg.to.floor}:${leg.to.room}`] = 'green';
+    scene.highlight(paint);
   }
 
-  function card(r) {
+  // ---- 3Dと階のタブの間の枠 --------------------------------------------
+  const slot = $('#slot');
+
+  function show(el) {
+    if (!el) { slot.hidden = true; slot.replaceChildren(); return; }
+    slot.replaceChildren(el);
+    slot.hidden = false;
+  }
+
+  // 説明を閉じたら、行き先が決まっていれば道順に戻す
+  function back() {
+    viewing = null;
+    paintRooms();
+    show(leg.from || leg.to ? routeCard() : null);
+  }
+
+  function openDetail(room, floor, rowEl) {
+    const r = findRoom(room, floor);
+    if (!r) return;
+    viewing = { room, floor };
+    paintRooms();
+
+    const paint = () => show(detailCard(r));
+
+    // 一覧の行から枠の位置まで、形を保ったまま動かす。
+    // 対応していないブラウザと、タブが裏にあって中断された場合はそのまま描画する。
+    if (!document.startViewTransition || !rowEl || document.visibilityState !== 'visible') { paint(); return; }
+
+    rowEl.style.viewTransitionName = 'pick';
+    const update = () => {
+      rowEl.style.viewTransitionName = '';
+      paint();
+      slot.firstElementChild.style.viewTransitionName = 'pick';
+    };
+    const cleanup = () => {
+      const c = slot.firstElementChild;
+      if (c) c.style.viewTransitionName = '';
+      rowEl.style.viewTransitionName = '';
+    };
+
+    let t;
+    try { t = document.startViewTransition({ update, types: ['pick'] }); }
+    catch { try { t = document.startViewTransition(update); } catch { paint(); return; } }
+    t.updateCallbackDone.catch(() => { paint(); });
+    t.finished.catch(() => {}).finally(cleanup);
+  }
+
+  function detailCard(r) {
     const el = document.createElement('div');
     el.className = 'detail card';
 
@@ -103,13 +156,7 @@ async function init() {
     const fl = document.createElement('span');
     fl.className = 'dfl';
     fl.textContent = `${r.floor}階`;
-    const x = document.createElement('button');
-    x.className = 'x';
-    x.type = 'button';
-    x.setAttribute('aria-label', '閉じる');
-    x.textContent = '×';
-    x.addEventListener('click', closeDetail);
-    head.append(num, nm, fl, x);
+    head.append(num, nm, fl, closeButton(back));
 
     const body = document.createElement('div');
     body.className = 'dbody';
@@ -134,11 +181,11 @@ async function init() {
 
     const act = document.createElement('div');
     act.className = 'dact';
-    for (const [which, text] of [['from', 'ここから出発'], ['to', 'ここへ行く']]) {
+    for (const [which, label] of [['from', 'ここから出発'], ['to', 'ここへ行く']]) {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = which === 'from' ? 'pill' : 'pill ghost';
-      b.textContent = text;
+      b.textContent = label;
       b.addEventListener('click', () => setLeg(which, r.room, r.floor));
       act.append(b);
     }
@@ -147,106 +194,117 @@ async function init() {
     return el;
   }
 
-  function openDetail(room, floor, rowEl) {
-    const r = findRoom(room, floor);
-    if (!r) return;
-    scene.highlight(pickedKeys(`${floor}:${room}`));
-
-    const host = $('#detail');
-    const paint = () => {
-      host.replaceChildren(card(r));
-      host.hidden = false;
-    };
-
-    // 一覧の行から説明の位置まで、形を保ったまま動かす。
-    // 対応していないブラウザと、タブが裏にあって中断された場合は、そのまま描画する。
-    if (!document.startViewTransition || !rowEl || document.visibilityState !== 'visible') { paint(); return; }
-
-    rowEl.style.viewTransitionName = 'pick';
-    const update = () => {
-      rowEl.style.viewTransitionName = '';
-      paint();
-      host.firstElementChild.style.viewTransitionName = 'pick';
-    };
-    const cleanup = () => {
-      const c = host.firstElementChild;
-      if (c) c.style.viewTransitionName = '';
-      rowEl.style.viewTransitionName = '';
-    };
-
-    let t;
-    try { t = document.startViewTransition({ update, types: ['pick'] }); }
-    catch { try { t = document.startViewTransition(update); } catch { paint(); return; } }
-
-    t.updateCallbackDone.catch(() => { paint(); });
-    t.finished.catch(() => {}).finally(cleanup);
+  function closeButton(fn) {
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'x';
+    x.setAttribute('aria-label', '閉じる');
+    x.textContent = '×';
+    x.addEventListener('click', fn);
+    return x;
   }
 
-  function closeDetail() {
-    $('#detail').hidden = true;
-    $('#detail').replaceChildren();
-    scene.highlight(pickedKeys(null));
-  }
-
-  // ---- 経路 ------------------------------------------------------------
-  const leg = { from: null, to: null };
-
-  function pickedKeys(extra) {
-    const keys = [];
-    for (const v of [leg.from, leg.to]) if (v) keys.push(`${v.floor}:${v.room}`);
-    if (extra) keys.push(extra);
-    return keys;
-  }
-
+  // ---- 道順 --------------------------------------------------------------
   function setLeg(which, room, floor) {
-    leg[which] = { room, floor };
     const other = which === 'from' ? 'to' : 'from';
-    // 同じ部屋を両方に入れない
     if (leg[other] && leg[other].room === room && leg[other].floor === floor) leg[other] = null;
-    paintLegs();
-    drawRoute();
+    leg[which] = { room, floor };
+    viewing = null; // 選んだら説明を閉じる
+    paintRooms();
+    show(routeCard());
   }
 
-  function paintLegs() {
-    for (const which of ['from', 'to']) {
-      const el = $(`#leg-${which}`);
+  function clearLegs() {
+    leg.from = null;
+    leg.to = null;
+    viewing = null;
+    paintRooms();
+    scene.drawRoute(null);
+    show(null);
+  }
+
+  function routeCard() {
+    const el = document.createElement('div');
+    el.className = 'detail card routecard';
+
+    const head = document.createElement('div');
+    head.className = 'rhead';
+    for (const [which, k] of [['from', '出発'], ['to', '目的']]) {
+      const c = document.createElement('span');
+      c.className = `chip ${which}`;
+      const key = document.createElement('span');
+      key.className = 'ck';
+      key.textContent = k;
+      const val = document.createElement('b');
       const v = leg[which];
-      el.textContent = v ? `${v.room} ${label(v.room, v.floor)}` : '未選択';
-      el.classList.toggle('empty', !v);
+      val.textContent = v ? `${v.room} ${nameOf(v.room, v.floor)}` : '未選択';
+      if (!v) c.classList.add('empty');
+      c.append(key, val);
+      head.append(c);
     }
-    $('#clear').hidden = !leg.from && !leg.to;
-  }
+    head.append(closeButton(clearLegs));
 
-  function drawRoute() {
-    const out = $('#result');
-    out.textContent = '';
-    scene.highlight(pickedKeys(null));
-    if (!leg.from || !leg.to) { scene.drawRoute(null); return; }
+    el.append(head);
+
+    if (!leg.from || !leg.to) {
+      scene.drawRoute(null);
+      const p = document.createElement('p');
+      p.className = 'rnote';
+      p.textContent = 'もう一方を一覧から選んでください。';
+      el.append(p);
+      return el;
+    }
 
     const a = `r${leg.from.floor}:${leg.from.room}`;
     const b = `r${leg.to.floor}:${leg.to.room}`;
-    const res = shortestPath(graph, a, b, { noStairs: $('#nostairs').checked });
+    const res = shortestPath(graph, a, b, { noStairs });
+
     if (!res) {
       scene.drawRoute(null);
-      out.textContent = '経路が見つかりません。階段を使わない条件を外すと出る場合があります。';
-      return;
+      const p = document.createElement('p');
+      p.className = 'rnote';
+      p.textContent = '経路が見つかりません。階段を使わない条件を外すと出る場合があります。';
+      el.append(p, routeFoot(null));
+      return el;
     }
 
     scene.drawRoute(res.path);
-    const sum = document.createElement('div');
-    sum.className = 'sum';
-    sum.textContent = `歩く距離 およそ ${Math.round(pathLength(res.path) / 5) * 5} m`;
-    out.append(sum);
-    const steps = describePath(res.path);
-    for (const s of steps.length ? steps : ['同じ階です。廊下をそのまま進みます。']) {
-      const d = document.createElement('div');
-      d.className = 'step';
-      d.textContent = s;
-      out.append(d);
+    const ol = document.createElement('ol');
+    ol.className = 'rsteps';
+    for (const s of describePath(res.path, nameOf)) {
+      const li = document.createElement('li');
+      li.textContent = s;
+      ol.append(li);
     }
+    el.append(ol, routeFoot(Math.round(pathLength(res.path) / 5) * 5));
+    return el;
   }
 
-  // ---- 一覧 ------------------------------------------------------------
+  function routeFoot(metres) {
+    const foot = document.createElement('div');
+    foot.className = 'rfoot';
+
+    const lab = document.createElement('label');
+    lab.className = 'opt';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.checked = noStairs;
+    cb.addEventListener('change', () => { noStairs = cb.checked; show(routeCard()); });
+    const sp = document.createElement('span');
+    sp.textContent = '階段を使わない';
+    lab.append(cb, sp);
+    foot.append(lab);
+
+    if (metres != null) {
+      const d = document.createElement('span');
+      d.className = 'dist';
+      d.textContent = `歩く距離 およそ ${metres} m`;
+      foot.append(d);
+    }
+    return foot;
+  }
+
+  // ---- 一覧 --------------------------------------------------------------
   function renderList(all) {
     const ol = $('#list');
     for (const e of all) {

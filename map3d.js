@@ -184,14 +184,56 @@ export function shortestPath(graph, from, to, opt = {}) {
 
 const cornerName = (k) => ({ NW: '北西', NE: '北東', SE: '南東', SW: '南西' }[k] || k);
 
-export function describePath(steps) {
+// 経路を人が読める道順にする。曲がり角と、途中で通る展示を目印にする。
+// 階をまたぐ区間は、連続していればまとめて1行にする。
+export function describePath(path, nameOf) {
   const out = [];
-  for (let i = 1; i < steps.length; i++) {
-    const a = steps[i - 1], b = steps[i];
-    if (a.f === b.f) continue;
-    const byEv = a.kind === 'ev' && b.kind === 'ev';
-    out.push(`${a.f}階から${b.f}階へ　${byEv ? 'エレベーター' : '階段'}（${byEv ? '南東' : cornerName(b.label)}）`);
+  if (!path || path.length < 2) return out;
+
+  const endRooms = new Set([path[0].label, path[path.length - 1].label]);
+  const text = (n) => {
+    const nm = nameOf ? nameOf(n.label, n.f) : '';
+    return nm ? `${n.label} ${nm}` : String(n.label);
+  };
+
+  out.push(`${text(path[0])}（${path[0].f}階）を出る`);
+
+  let i = 1;
+  while (i < path.length) {
+    // 階をまたぐ区間。同じ手段で続く限りまとめる
+    if (path[i].f !== path[i - 1].f) {
+      const byEv = path[i].kind === 'ev' && path[i - 1].kind === 'ev';
+      const from = path[i - 1].f;
+      let k = i;
+      while (k + 1 < path.length && path[k + 1].f !== path[k].f && path[k + 1].kind === path[k].kind) k++;
+      const where = byEv ? '南東' : cornerName(path[k].label);
+      const dir = path[k].f > from ? '上がる' : '下りる';
+      out.push(`${where}の${byEv ? 'エレベーター' : '階段'}で ${from}階から${path[k].f}階へ${dir}`);
+      i = k + 1;
+      continue;
+    }
+
+    // 同じ階を歩く区間をまとめ、曲がり角と目印を1行で出す
+    let j = i;
+    while (j + 1 < path.length && path[j + 1].f === path[j].f) j++;
+    const run = path.slice(i - 1, j + 1);
+    // 区間の端の角は、階段の上り口か下り口なので「曲がる」には数えない
+    const inner = run.slice(1, -1);
+    const corners = inner.filter((n) => n.kind === 'corner').map((n) => cornerName(n.label));
+    const marks = inner.filter((n) => n.kind === 'corridor' && !endRooms.has(n.label));
+    const mark = marks.length ? marks[Math.floor(marks.length / 2)] : null;
+
+    if (corners.length) {
+      const turn = `${corners.join('と')}の角を曲がる`;
+      out.push(mark ? `${text(mark)}の方面へ進み、${turn}` : `廊下を進み、${turn}`);
+    } else if (mark) {
+      out.push(`${text(mark)}の方面へ廊下を進む`);
+    }
+    i = j + 1;
   }
+
+  const goal = path[path.length - 1];
+  out.push(`${text(goal)}（${goal.f}階）に到着`);
   return out;
 }
 
@@ -209,7 +251,9 @@ export function pathLength(steps) {
 // ---- 3D ------------------------------------------------------------------
 const INK = 0x1d1d1f;
 const RED = 0xff3b30;
-const BLUE = 0x0071e3;
+const BLUE  = 0x0071e3;
+const GREEN = 0x34c759;  // 目的地
+const AMBER = 0xf5b301;  // 階段とエレベーター
 
 export function createScene(canvas, floors, onPick) {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -302,11 +346,11 @@ export function createScene(canvas, floors, onPick) {
     if (sash.length) g.add(seg(sash, mat.sash));
 
     // 階段とEVの領域。経路のグラフと同じ座標から引いているので、経路の線とずれない
-    const circ = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.22 });
+    const circ = new THREE.LineBasicMaterial({ color: AMBER, transparent: true, opacity: 0.85 });
     const yy = y + 0.06;
     for (const [cx, cz] of Object.values(CORNERS)) {
       const r = { x: cx - STAIR_SIZE / 2, z: cz - STAIR_SIZE / 2, w: STAIR_SIZE, d: STAIR_SIZE };
-      g.add(loop(rectPts(r, yy), circ));
+      g.add(loop(rectPts(r, yy), circ)).userData.circ = true;
       const steps = [];
       for (let i = 1; i < 5; i++) {
         const sz = r.z + (r.d * i) / 5;
@@ -314,13 +358,13 @@ export function createScene(canvas, floors, onPick) {
       }
       // 上の階へ向かう1本。段を上がることが分かる
       if (f < GEOM.FLOORS) steps.push(V(r.x + 0.5, yy, r.z + r.d - 0.5), V(r.x + r.w - 0.5, y + FH, r.z + 0.5));
-      g.add(seg(steps, circ));
+      g.add(seg(steps, circ)).userData.circ = true;
     }
     {
       const ex = COR_E + EV_OFFSET, ez = COR_S + EV_OFFSET;
       const r = { x: ex - EV_SIZE / 2, z: ez - EV_SIZE / 2, w: EV_SIZE, d: EV_SIZE };
-      g.add(loop(rectPts(r, yy), circ));
-      g.add(loop(rectPts({ x: r.x + 0.6, z: r.z + 0.6, w: EV_SIZE - 1.2, d: EV_SIZE - 1.2 }, yy), circ));
+      g.add(loop(rectPts(r, yy), circ)).userData.circ = true;
+      g.add(loop(rectPts({ x: r.x + 0.6, z: r.z + 0.6, w: EV_SIZE - 1.2, d: EV_SIZE - 1.2 }, yy), circ)).userData.circ = true;
     }
 
     world.add(g);
@@ -334,7 +378,7 @@ export function createScene(canvas, floors, onPick) {
     for (const [dx, dz] of [[-h, -h], [h, -h], [h, h], [-h, h]]) {
       p.push(V(ex + dx, 0, ez + dz), V(ex + dx, TOP, ez + dz));
     }
-    world.add(seg(p, mat.hall));
+    world.add(seg(p, new THREE.LineBasicMaterial({ color: AMBER, transparent: true, opacity: 0.5 })));
   }
 
   // 正門。1階でEVの前につながる
@@ -412,15 +456,17 @@ export function createScene(canvas, floors, onPick) {
   }
 
   let marked = [];
-  function highlight(keys) {
+  // paint は { "1:100": "red", "4:421": "green" } の形
+  function highlight(paint = {}) {
     for (const m of marked) {
       m.material.color.setHex(INK); m.material.opacity = 0.05;
       m.userData.edge.material.color.setHex(INK); m.userData.edge.material.opacity = 0.22;
     }
-    marked = roomMeshes.filter((m) => keys.includes(`${m.userData.floor}:${m.userData.room}`));
+    marked = roomMeshes.filter((m) => paint[`${m.userData.floor}:${m.userData.room}`]);
     for (const m of marked) {
-      m.material.color.setHex(RED); m.material.opacity = 0.5;
-      m.userData.edge.material.color.setHex(RED); m.userData.edge.material.opacity = 1;
+      const c = paint[`${m.userData.floor}:${m.userData.room}`] === 'green' ? GREEN : RED;
+      m.material.color.setHex(c); m.material.opacity = 0.5;
+      m.userData.edge.material.color.setHex(c); m.userData.edge.material.opacity = 1;
     }
   }
 
@@ -435,6 +481,7 @@ export function createScene(canvas, floors, onPick) {
         }
         if (o.material === mat.slab || o.material === mat.sash) continue;
         if (marked.some((m) => m.userData.edge === o)) continue;
+        if (o.userData.circ) { o.material.opacity = lit ? 0.85 : 0.14; continue; }
         o.material.opacity = lit ? 0.22 : 0.05;
       }
     });

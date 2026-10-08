@@ -12,6 +12,7 @@
   --tint:  #f5f5f7;
   --red:   #ff3b30;
   --blue:  #0071e3;
+  --green: #34c759;
   --glass: rgba(255, 255, 255, 0.72);
   --gut:   22px;
 
@@ -77,10 +78,9 @@ a:hover { text-decoration: underline; }
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
 
-.mark { display: flex; align-items: baseline; gap: 9px; color: inherit; }
+.mark { color: inherit; font-size: 19px; line-height: 1; }
 .mark:hover { text-decoration: none; }
-.mark-n { font-size: 26px; line-height: 1; color: var(--red); }
-.mark-t { font-size: 13px; letter-spacing: 0.02em; }
+.mark-n { color: var(--red); }
 
 .bar nav { margin-left: auto; display: flex; gap: 2px; }
 .bar nav a {
@@ -140,50 +140,64 @@ main { flex: 1; min-height: 0; position: relative; }
 }
 .floors button.on { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
 
-/* 経路 */
-.route {
-  position: absolute; left: var(--gut); bottom: 26px;
-  width: min(330px, calc(100% - 44px));
-  padding: 16px; display: grid; gap: 10px;
+/* 道順。説明と同じ枠に出す */
+.routecard { padding: 14px 16px 15px; }
+.rhead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: baseline; gap: 7px;
+  background: var(--tint); border-radius: 980px; padding: 6px 13px;
+  font-size: 13px; min-width: 0;
 }
-.legs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.leg { background: var(--tint); border-radius: 10px; padding: 7px 10px; min-width: 0; }
-.leg .k { display: block; font-size: 10.5px; color: var(--sub); }
-.leg .v { display: block; font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.leg .v.empty { color: var(--sub); }
+.chip .ck { font-size: 10.5px; color: var(--sub); }
+.chip b { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chip.from { box-shadow: inset 0 0 0 1.5px var(--red); }
+.chip.to { box-shadow: inset 0 0 0 1.5px var(--green); }
+.chip.empty { box-shadow: none; color: var(--sub); }
+.rhead .x { margin-left: auto; }
 
-.route .row { display: flex; align-items: center; gap: 14px; }
-.link {
-  font: inherit; font-size: 12.5px; margin-left: auto;
-  background: none; border: 0; color: var(--blue); cursor: pointer; padding: 0;
-}
-.route .opt {
-  display: flex; flex-direction: row; align-items: center; gap: 7px;
-  font-size: 12.5px; color: var(--ink); cursor: pointer;
-}
-.route .opt input { accent-color: var(--blue); margin: 0; }
+.rnote { margin: 11px 0 0; font-size: 13px; color: var(--sub); }
 
-#result { font-size: 13px; line-height: 1.75; }
-#result:empty { display: none; }
-#result .sum { font-weight: 500; }
-#result .step { color: var(--blue); }
+.rsteps { margin: 12px 0 0; padding: 0; list-style: none; counter-reset: s; }
+.rsteps li {
+  position: relative; padding: 5px 0 5px 28px; font-size: 13.5px; line-height: 1.6;
+  counter-increment: s;
+}
+.rsteps li::before {
+  content: counter(s);
+  position: absolute; left: 0; top: 6px;
+  width: 19px; height: 19px; border-radius: 50%;
+  background: var(--tint); color: var(--sub);
+  font-family: var(--la); font-size: 11px; font-weight: 600;
+  display: grid; place-items: center;
+}
+.rsteps li:first-child::before { background: var(--red); color: #fff; }
+.rsteps li:last-child::before { background: var(--green); color: #fff; }
+
+.rfoot {
+  display: flex; align-items: center; gap: 14px;
+  margin-top: 12px; padding-top: 11px; border-top: 1px solid var(--hair);
+}
+.opt { display: flex; align-items: center; gap: 7px; font-size: 12.5px; cursor: pointer; }
+.opt input { accent-color: var(--blue); margin: 0; }
+.dist { margin-left: auto; font-size: 12.5px; color: var(--sub); }
 
 /* 展示の説明。3Dと階のタブの間 */
-#detail {
+#slot {
   position: absolute; left: 50%; bottom: 88px; transform: translateX(-50%);
   width: min(560px, calc(100% - 44px));
 }
-#detail[hidden] { display: none; }
+#slot[hidden] { display: none; }
 .detail { padding: 15px 18px 16px; }
 .dhead { display: flex; align-items: baseline; gap: 11px; }
 .dhead .room { font-size: 30px; line-height: 1; color: var(--red); }
 .dhead .dname { font-size: 16px; font-weight: 500; }
 .dhead .dfl { font-size: 12px; color: var(--sub); }
-.dhead .x {
+.x {
   margin-left: auto; align-self: flex-start;
   font: inherit; font-size: 18px; line-height: 1; color: var(--sub);
   background: none; border: 0; cursor: pointer; padding: 0 2px;
 }
+.x:hover { color: var(--ink); }
 .dbody { margin-top: 9px; max-height: 164px; overflow-y: auto; }
 .dbody .ex { padding: 7px 0; border-top: 1px solid var(--hair); }
 .dbody .ex:first-child { border-top: 0; padding-top: 0; }
@@ -322,9 +336,7 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
   .title { top: 18px; }
   /* 一覧は上、経路は下。どちらも畳んだ状態で重ならないように離す */
   .panel { top: 14px; bottom: auto; right: var(--gut); left: var(--gut); width: auto; max-height: 46%; }
-  .route { left: var(--gut); right: var(--gut); top: 70px; bottom: auto; width: auto; }
-  .panel[data-open="true"] ~ .route { display: none; }
-  #detail { left: var(--gut); right: var(--gut); bottom: 76px; width: auto; transform: none; }
+  #slot { left: var(--gut); right: var(--gut); bottom: 76px; width: auto; transform: none; }
   .dbody { max-height: 20vh; }
   .title { display: none; }
   .floors { bottom: 20px; }

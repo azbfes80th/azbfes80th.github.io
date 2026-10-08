@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,400..900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=3">
 <script type="importmap">
 {"imports":{
   "three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
@@ -21,7 +21,7 @@
 <p class="demo-note">第80回文化祭実行委員長選挙のためのデモです。掲載内容は第79回の公開情報で、公式サイトではありません。</p>
 
 <header class="bar">
-  <a class="mark" href="index.html"><span class="mark-n disp">80</span><span class="mark-t">麻布学園文化祭</span></a>
+  <a class="mark disp" href="index.html"><span class="mark-n">80th</span> AFes demo site</a>
   <button class="burger" aria-expanded="false" aria-controls="nav" aria-label="メニューを開く">
     <span></span><span></span><span></span>
   </button>
@@ -46,19 +46,7 @@
       </div>
     </aside>
 
-    <div id="detail" hidden></div>
-
-    <div class="route card">
-      <div class="legs">
-        <div class="leg"><span class="k">出発</span><span class="v empty" id="leg-from">未選択</span></div>
-        <div class="leg"><span class="k">目的</span><span class="v empty" id="leg-to">未選択</span></div>
-      </div>
-      <div class="row">
-        <label class="opt"><input type="checkbox" id="nostairs"><span>階段を使わない</span></label>
-        <button id="clear" class="link" hidden>消す</button>
-      </div>
-      <output id="result" aria-live="polite"></output>
-    </div>
+    <div id="slot" aria-live="polite" hidden></div>
 
     <div class="floors" role="group" aria-label="階を選ぶ">
       <button data-floor="0" class="on">全階</button>
@@ -68,11 +56,11 @@
       <button data-floor="4">4F</button>
     </div>
 
-    <p class="hint">一覧か3Dの部屋を押すと展示が出ます。四隅の格子が階段、南東の二重枠がエレベーター。</p>
+    <p class="hint">一覧か3Dの部屋を押すと展示が出ます。黄色が階段とエレベーター。</p>
   </section>
 </main>
 
-<script type="module" src="site.js?v=2"></script>
-<script type="module" src="app.js?v=2"></script>
+<script type="module" src="site.js?v=3"></script>
+<script type="module" src="app.js?v=3"></script>
 </body>
 </html>
