@@ -46,12 +46,16 @@
       </div>
     </aside>
 
+    <div id="detail" hidden></div>
+
     <div class="route card">
-      <label><span>出発</span><select id="from"></select></label>
-      <label><span>目的</span><select id="to"></select></label>
+      <div class="legs">
+        <div class="leg"><span class="k">出発</span><span class="v empty" id="leg-from">未選択</span></div>
+        <div class="leg"><span class="k">目的</span><span class="v empty" id="leg-to">未選択</span></div>
+      </div>
       <div class="row">
-        <button id="go" class="pill">経路を出す</button>
         <label class="opt"><input type="checkbox" id="nostairs"><span>階段を使わない</span></label>
+        <button id="clear" class="link" hidden>消す</button>
       </div>
       <output id="result" aria-live="polite"></output>
     </div>
@@ -64,7 +68,7 @@
       <button data-floor="4">4F</button>
     </div>
 
-    <p class="hint">部屋を押すと展示が出ます。四隅の格子が階段、南東の二重枠がエレベーター。</p>
+    <p class="hint">一覧か3Dの部屋を押すと展示が出ます。四隅の格子が階段、南東の二重枠がエレベーター。</p>
   </section>
 </main>
 
