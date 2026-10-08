@@ -348,6 +348,12 @@ h2 { font-size: 22px; font-weight: 600; margin: 80px 0 18px; letter-spacing: -0.
     width: auto; transform: none;
   }
   .dbody { max-height: 20vh; }
+
+  /* 道順を出している間は、一覧と出発・目的を消して手順だけにする */
+  #map[data-mode="route"] .panel { display: none; }
+  #map[data-mode="route"] .rhead .chip { display: none; }
+  #map[data-mode="route"] .rhead { margin-bottom: -10px; }
+  #map[data-mode="route"] #slot.as-route { top: 14px; }
   .title { display: none; }
   .floors { bottom: 20px; }
   .hint { display: none; }

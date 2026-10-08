@@ -1,7 +1,7 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
 // 3Dと階のタブの間の枠（#slot）には、展示の説明か道順のどちらかを出す。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=5';
-import { $, $$, load } from './site.js?v=5';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=6';
+import { $, $$, load } from './site.js?v=6';
 
 const FLOORS = [1, 2, 3, 4];
 
@@ -56,6 +56,8 @@ async function init() {
   for (const r of rooms) for (const ex of r.exhibits) entries.push({ ...ex, room: r.room, floor: r.floor, space: r.space });
 
   const narrow = () => matchMedia('(max-width: 820px)').matches;
+  // 狭い画面では、道順を出している間だけ一覧と出発・目的を隠して手順に場所を譲る
+  const setMode = (m) => { if (m) $('#map').dataset.mode = m; else delete $('#map').dataset.mode; };
 
   const graph = buildGraph(floors);
   const scene = createScene($('#stage'), floors, (d) => openDetail(d.room, d.floor, null));
@@ -101,6 +103,7 @@ async function init() {
 
   // 道順は3Dを隠さないよう左へ寄せる。説明は3Dと階のタブの間のまま
   function show(el) {
+    setMode(el && el.classList.contains('routecard') && leg.from && leg.to ? 'route' : null);
     if (!el) { slot.hidden = true; slot.replaceChildren(); return; }
     slot.classList.toggle('as-route', el.classList.contains('routecard'));
     slot.replaceChildren(el);
@@ -119,6 +122,7 @@ async function init() {
     if (!r) return;
     viewing = { room, floor };
     paintRooms();
+    setMode(null);
     if (narrow()) togglePanel(false);
 
     const paint = () => show(detailCard(r));
