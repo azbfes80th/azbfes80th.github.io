@@ -38,6 +38,13 @@
 使っている外部のものは three.js（CDN）と Google Fonts の2つだけです。フレームワークもビルドツールも
 入れていません。
 
+**更新したら `?v=` の番号を上げてください。** GitHub Pages は CSS と JS をブラウザに保存させるので、
+新しいHTMLと古いJSが混ざって壊れます。番号は3つのHTMLの読み込み行と、`app.js` 冒頭の import にあります。
+
+```bash
+grep -rn '?v=' *.html app.js
+```
+
 ローカルで見るときは、`fetch` が `file://` では動かないので、簡易サーバーを立ててください。
 
 ```bash

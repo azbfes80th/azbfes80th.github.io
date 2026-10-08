@@ -1,6 +1,6 @@
 // 展示と校舎のページ。3Dモデル、展示一覧、最短経路。
-import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js';
-import { $, $$, load } from './site.js';
+import { createScene, buildGraph, shortestPath, describePath, pathLength } from './map3d.js?v=2';
+import { $, $$, load } from './site.js?v=2';
 
 const FLOORS = [1, 2, 3, 4];
 
