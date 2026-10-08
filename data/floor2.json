@@ -102,7 +102,7 @@
    "name": "生物部展",
    "desc": "麻布と言えば生物部。　北海道から沖縄まで、日本全国の多種多様な生物たちがあなたを待っています。最高の展示を創ります。",
    "cardColor": "blue",
-   "wing": "north_stub",
+   "wing": "science",
    "indexInWing": 0
   },
   {
@@ -118,7 +118,7 @@
    "name": "脱出ゲーム展",
    "desc": "脱出ゲーム展です！今年の謎解きのテーマは「麻布学園からの脱出」です！ひらめき力を使う謎解きなので、誰でも楽しむことができます。ぜひ来てください！",
    "cardColor": "blue",
-   "wing": "east_annex",
+   "wing": "art",
    "indexInWing": 0
   },
   {
@@ -126,7 +126,7 @@
    "name": "おば展",
    "desc": "文化祭の定番、お化け屋敷やってます。最近のお化けはコンプライアンスへの配慮も持っているので、安心して来てね。",
    "cardColor": "blue",
-   "wing": "east_annex",
+   "wing": "art",
    "indexInWing": 1
   }
  ],

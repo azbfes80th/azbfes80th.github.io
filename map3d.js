@@ -27,10 +27,17 @@ const COR_S = OUT - CD - COR / 2;
 const COR_W = COR_N;
 const COR_E = COR_S;
 
-// ロの字から張り出す部分。これがあるので外形は単純な矩形にならない
-const STUB = { x: IN0 + 2 * CW, z: -(CD + COR), w: 2 * CW, d: CD };  // 北へ
-const NECK = { x: IN0 + 2.6 * CW, z: -COR, w: CW * 0.8, d: COR };    // 北の渡り
-const ANNEX = { x: OUT + COR, z: IN0, w: CD, d: 2 * CW };            // 東へ
+// 普通教室棟とは別の建物。これがあるので外形は単純な矩形にならない
+const SCI = { x: IN0 + 2 * CW, z: -(CD + COR + 2), w: 2 * CW, d: CD };   // 理科棟 4階建て
+const ART = { x: IN0 + 4 * CW + 3, z: -(CD + COR + 4.5), w: CD, d: 2 * CW }; // 芸術棟 3階建て
+const ANX = { x: OUT + 1.5, z: OUT - CD - CW, w: 5, d: CW };             // 南東の小さな張り出し
+const SCI_FLOORS = 4;
+const ART_FLOORS = 3;
+const ANX_FLOORS = 3;
+// 棟をつなぐ渡り廊下
+const NECK_SCI = { x: SCI.x + CW * 0.6, z: SCI.z + CD, w: CW * 0.8, d: -(SCI.z + CD) };
+const NECK_ART = { x: SCI.x + 2 * CW, z: ART.z + CW * 0.4, w: ART.x - (SCI.x + 2 * CW), d: 3.2 };
+const NECK_ANX = { x: OUT, z: ANX.z + 1.5, w: ANX.x - OUT, d: 3.2 };
 
 // 講堂。学校サイトに「2階席を含め約1500名収容」とある。内部に床を持たない1室として置く
 const HALL = { x: OUT + 7, z: 8, w: 29, d: 35, h: FH * 3.2 };
@@ -46,15 +53,16 @@ export function roomRect(wing, i) {
     case 'south':      return { x: IN0 + i * CW, z: OUT - CD,     w: CW, d: CD };
     case 'west':       return { x: 0,            z: IN0 + i * CW, w: CD, d: CW };
     case 'east':       return { x: OUT - CD,     z: IN0 + i * CW, w: CD, d: CW };
-    case 'north_stub': return { x: STUB.x + i * CW, z: STUB.z,    w: CW, d: CD };
-    case 'east_annex': return { x: ANNEX.x, z: ANNEX.z + i * CW,  w: CD, d: CW };
+    case 'science':    return { x: SCI.x + i * CW, z: SCI.z,      w: CW, d: CD };
+    case 'art':        return { x: ART.x, z: ART.z + i * CW,     w: CD, d: CW };
+    case 'east_annex': return { x: ANX.x, z: ANX.z,              w: ANX.w, d: CW };
     default:           return null;
   }
 }
 
 // 教室が中庭を向く面。窓の桟をここに描く
 function innerFace(wing) {
-  return { north: '+z', south: '-z', west: '+x', east: '-x', north_stub: '+z', east_annex: '-x' }[wing] || '+z';
+  return { north: '+z', south: '-z', west: '+x', east: '-x', science: '+z', art: '-x', east_annex: '-x' }[wing] || '+z';
 }
 
 function doorPoint(wing, i) {
@@ -64,7 +72,8 @@ function doorPoint(wing, i) {
     case 'south':      return [r.x + r.w / 2, COR_S];
     case 'west':       return [COR_W, r.z + r.d / 2];
     case 'east':       return [COR_E, r.z + r.d / 2];
-    case 'north_stub': return [r.x + r.w / 2, COR_N];
+    case 'science':    return [r.x + r.w / 2, SCI.z + CD + 1.3];
+    case 'art':        return [ART.x - 1.6, r.z + r.d / 2];
     case 'east_annex': return [COR_E, r.z + r.d / 2];
     default:           return [MID, MID];
   }
@@ -104,7 +113,7 @@ export function buildGraph(floors) {
     for (const [k, [x, z]] of Object.entries(CORNERS)) add(`c${f}:${k}`, x, z, f, 'corner', k);
 
     const data = floors[f];
-    const byWing = { north: [], south: [], west: [], east: [], north_stub: [], east_annex: [] };
+    const byWing = { north: [], south: [], west: [], east: [], science: [], art: [], east_annex: [] };
     for (const r of (data ? data.rooms : [])) if (byWing[r.wing]) byWing[r.wing].push(r);
     for (const list of Object.values(byWing)) list.sort((a, b) => a.indexInWing - b.indexInWing);
 
@@ -128,7 +137,7 @@ export function buildGraph(floors) {
     run('south', 'SE', 'SW', true);
     run('west', 'SW', 'NW', true);
 
-    for (const wing of ['north_stub', 'east_annex']) {
+    for (const wing of ['science', 'art', 'east_annex']) {
       for (const r of byWing[wing]) {
         const [x, z] = doorPoint(wing, r.indexInWing);
         const door = `d${f}:${r.room}`;
@@ -136,7 +145,7 @@ export function buildGraph(floors) {
         const rect = roomRect(wing, r.indexInWing);
         add(`r${f}:${r.room}`, rect.x + rect.w / 2, rect.z + rect.d / 2, f, 'room', r.room);
         link(door, `r${f}:${r.room}`, dist(door, `r${f}:${r.room}`) + 4);
-        const near = wing === 'north_stub' ? `c${f}:NE` : `c${f}:SE`;
+        const near = wing === 'east_annex' ? `c${f}:SE` : `c${f}:NE`;
         link(door, near, dist(door, near));
       }
     }
@@ -268,8 +277,9 @@ export function createScene(canvas, floors, onPick) {
   controls.maxPolarAngle = Math.PI * 0.495;
   controls.minDistance = 30;
   controls.maxDistance = 400;
-  controls.target.set(MID + 5, TOP * 0.35, MID);
-  camera.position.set(MID + 42, 64, MID + 62);
+  // 理科棟と芸術棟が北へ伸びた分、狙いを北寄りにして少し引く
+  controls.target.set(MID + 7, TOP * 0.32, MID - 7);
+  camera.position.set(MID + 48, 74, MID + 70);
 
   const world = new THREE.Group();
   scene.add(world);
@@ -298,12 +308,12 @@ export function createScene(canvas, floors, onPick) {
     const g = new THREE.Group();
     const y = (f - 1) * FH;
 
-    // 床。ロの字に加えて北の張り出しと東の別棟があるので、外形は矩形にならない
+    // 床。普通教室棟のロの字に、理科棟と芸術棟と南東の張り出しが加わる
     g.add(loop(rectPts({ x: 0, z: 0, w: OUT, d: OUT }, y), mat.slab));
     g.add(loop(rectPts({ x: IN0, z: IN0, w: SPAN, d: SPAN }, y), mat.slab));
-    g.add(loop(rectPts(STUB, y), mat.slab));
-    g.add(loop(rectPts(NECK, y), mat.slab));
-    g.add(loop(rectPts(ANNEX, y), mat.slab));
+    if (f <= SCI_FLOORS) { g.add(loop(rectPts(SCI, y), mat.slab)); g.add(loop(rectPts(NECK_SCI, y), mat.slab)); }
+    if (f <= ART_FLOORS) { g.add(loop(rectPts(ART, y), mat.slab)); g.add(loop(rectPts(NECK_ART, y), mat.slab)); }
+    if (f <= ANX_FLOORS) { g.add(loop(rectPts(ANX, y), mat.slab)); g.add(loop(rectPts(NECK_ANX, y), mat.slab)); }
 
     const data = floors[f];
     const sash = [];
@@ -387,6 +397,17 @@ export function createScene(canvas, floors, onPick) {
     const gx = COR_E + 11, gz = COR_S + 10;
     world.add(loop(rectPts({ x: gx - 3, z: gz - 2, w: 6, d: 4 }, 0.06), mat.hall));
     world.add(seg([V(gx, 0.06, gz - 2), V(COR_E + EV_OFFSET, 0.06, COR_S + EV_OFFSET)], mat.hall));
+  }
+
+  // 別棟の屋上と柱
+  for (const [rect, n] of [[SCI, SCI_FLOORS], [ART, ART_FLOORS], [ANX, ANX_FLOORS]]) {
+    const top = n * FH;
+    world.add(loop(rectPts(rect, top), mat.shell));
+    const p = [];
+    for (const [dx, dz] of [[0, 0], [rect.w, 0], [rect.w, rect.d], [0, rect.d]]) {
+      p.push(V(rect.x + dx, 0, rect.z + dz), V(rect.x + dx, top, rect.z + dz));
+    }
+    world.add(seg(p, mat.shell));
   }
 
   // 屋上とパラペット

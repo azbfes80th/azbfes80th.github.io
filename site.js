@@ -4,7 +4,7 @@
 // GitHub Pages は HTML も最大10分ブラウザに保存させる。古いHTMLのままだと
 // 新しいCSSやJSが読まれず表示が崩れるので、版が食い違っていたら読み直す。
 // 番号は bump.py で version.txt と一緒に上げる。
-const BUILD = '12';
+const BUILD = '13';
 fetch('version.txt', { cache: 'no-store' })
   .then((r) => (r.ok ? r.text() : null))
   .then((v) => {
@@ -21,7 +21,8 @@ fetch('version.txt', { cache: 'no-store' })
 export const $ = (s, r = document) => r.querySelector(s);
 export const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 
-export const load = (p) => fetch(p).then((r) => {
+// データのJSONもブラウザに保存される。版の番号を付けて古い内容を避ける
+export const load = (p) => fetch(`${p}${p.includes('?') ? '&' : '?'}v=${BUILD}`).then((r) => {
   if (!r.ok) throw new Error(`${p} が読み込めません (${r.status})`);
   return r.json();
 });
