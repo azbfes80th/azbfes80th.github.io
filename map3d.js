@@ -35,8 +35,9 @@ const ANNEX = { x: OUT + COR, z: IN0, w: CD, d: 2 * CW };            // 東へ
 // 講堂。学校サイトに「2階席を含め約1500名収容」とある。内部に床を持たない1室として置く
 const HALL = { x: OUT + 7, z: 8, w: 29, d: 35, h: FH * 3.2 };
 
-// 塔屋。中庭の内側の角に建ち、4階より上に突き出る。EVのある南東の対角なので北西の角
-const TOWER = { w: 5.2, d: 4.4, h: TOP + 7.5 };
+// 塔屋。北西の角の階段室の真上に立ち、屋上から1層分ほど突き出る。
+// 中庭側の面を45度に切り、そこに星章を付ける。EVのある南東の角とは対角。
+const TOWER = { w: 4.4, d: 3.4, h: TOP + 4.8 };
 
 // ---- 平面上の矩形 --------------------------------------------------------
 export function roomRect(wing, i) {
@@ -403,10 +404,10 @@ export function createScene(canvas, floors, onPick) {
     world.add(seg(p, mat.shell));
   }
 
-  // 塔屋と星章。中庭の内側の北西の角に建ち、中庭へ斜めに face を向ける
+  // 塔屋と星章。北西の角の階段室の延長線上に立ち、斜めの面を中庭の中心へ向ける
   {
     const g = new THREE.Group();
-    g.position.set(IN0 + 1.4, 0, IN0 + 1.4);
+    g.position.set(COR_W + 0.9, 0, COR_N + 0.9);
     g.rotation.y = Math.PI * 1.25; // -z 面が中庭の中心を向く向き
     world.add(g);
 
@@ -420,17 +421,24 @@ export function createScene(canvas, floors, onPick) {
     te.position.copy(t.position);
     g.add(te);
 
-    // 麻布学園の星章を中庭側の面に描く
+    // 屋上に出る部分の笠木
+    g.add(loop(rectPts({ x: -TOWER.w / 2 - 0.4, z: -TOWER.d / 2 - 0.4, w: TOWER.w + 0.8, d: TOWER.d + 0.8 }, TOWER.h), mat.shell));
+
+    // 麻布学園の星章。中庭側の面の、屋上より少し上に付く
     const star = [];
-    const R = 1.5, r2 = 0.62, sy = TOP + 4.6, sz = -TOWER.d / 2 - 0.05;
+    const R = 1.25, r2 = 0.52, sy = TOP + 2.4, sz = -TOWER.d / 2 - 0.05;
     for (let i = 0; i < 12; i++) {
       const a = (Math.PI / 6) * i - Math.PI / 2;
-      star.push(V(Math.cos(a) * (i % 2 === 0 ? R : r2), sy + Math.sin(a) * (i % 2 === 0 ? R : r2), sz));
+      const rad = i % 2 === 0 ? R : r2;
+      star.push(V(Math.cos(a) * rad, sy + Math.sin(a) * rad, sz));
     }
     g.add(loop(star, mat.shell));
 
+    // 3階あたりで一段せり出す持ち送り
+    g.add(loop(rectPts({ x: -TOWER.w / 2 - 0.5, z: -TOWER.d / 2 - 0.9, w: TOWER.w + 1, d: 0.9 }, FH * 2.2), mat.shell));
+
     // 車寄せの庇
-    g.add(loop(rectPts({ x: -4.2, z: -3.6, w: 8.4, d: 3.6 }, 4.2), mat.shell));
+    g.add(loop(rectPts({ x: -3.8, z: -TOWER.d / 2 - 3.4, w: 7.6, d: 3.4 }, 4.0), mat.shell));
   }
 
   // 講堂
